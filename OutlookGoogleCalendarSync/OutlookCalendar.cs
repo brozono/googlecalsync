@@ -30,7 +30,6 @@ namespace OutlookGoogleCalendarSync {
                 return instance;
             }
         }
-        public PushSyncTimer OgcsPushTimer;
         private String currentUserSMTP {
             get { return IOutlook.CurrentUserSMTP(); }
         }
@@ -75,25 +74,28 @@ namespace OutlookGoogleCalendarSync {
             log.Info("Registering for Outlook appointment change events...");
             if (eventHandlerHooks != 0) purgeOutlookEventHandlers();
             
-            if (Settings.Instance.SyncDirection != SyncDirection.GoogleToOutlook) {            
-                log.Debug("Create the timer for the push synchronisation");
-                if (OgcsPushTimer == null) 
-                    OgcsPushTimer = new PushSyncTimer();
-                if (!OgcsPushTimer.Running())
-                    OgcsPushTimer.Switch(true);
-
+            if (Settings.Instance.SyncDirection != SyncDirection.GoogleToOutlook) {
                 UseOutlookCalendar.Items.ItemAdd += new ItemsEvents_ItemAddEventHandler(appointmentItem_Add);
                 UseOutlookCalendar.Items.ItemChange += new ItemsEvents_ItemChangeEventHandler(appointmentItem_Change);
                 UseOutlookCalendar.Items.ItemRemove += new ItemsEvents_ItemRemoveEventHandler(appointmentItem_Remove);
                 eventHandlerHooks++;
+            
+                log.Debug("Create the timer for the push synchronisation");
+                MainForm.Instance.OgcsPushTimer = new Timer();
+                MainForm.Instance.OgcsPushTimer.Tick += new EventHandler(MainForm.Instance.OgcsPushTimer_Tick);
+                if (!MainForm.Instance.OgcsPushTimer.Enabled) {
+                    MainForm.Instance.OgcsPushTimer.Interval = 2 * 60000;
+                    MainForm.Instance.OgcsPushTimer.Tag = "PushTimer";
+                    MainForm.Instance.OgcsPushTimer.Start();
+                }
             }
         }
 
         public void DeregisterForPushSync() {
             log.Info("Deregistering from Outlook appointment change events...");
             purgeOutlookEventHandlers();
-            if (OgcsPushTimer != null && OgcsPushTimer.Running())
-                OgcsPushTimer.Switch(false);
+            if (MainForm.Instance.OgcsPushTimer != null && MainForm.Instance.OgcsPushTimer.Enabled) 
+            MainForm.Instance.OgcsPushTimer.Stop();
         }
 
         private void purgeOutlookEventHandlers() {
@@ -118,8 +120,10 @@ namespace OutlookGoogleCalendarSync {
                 if (ai.Start < syncMax && ai.End >= syncMin) {
                     log.Debug(GetEventSummary(ai));
                     log.Debug("Item is in sync range, so push sync flagged for Go.");
-                    OgcsPushTimer.ItemsQueued++;
-                    log.Info(OgcsPushTimer.ItemsQueued + " items changed since last sync.");
+                    int pushFlag = Convert.ToInt16(MainForm.Instance.GetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag"));
+                    pushFlag++;
+                    log.Info(pushFlag + " items changed since last sync.");
+                    MainForm.Instance.SetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag", pushFlag);
                 } else {
                     log.Fine("Item is outside of sync range.");
                 }
@@ -139,8 +143,10 @@ namespace OutlookGoogleCalendarSync {
                 if (ai.Start < syncMax && ai.End >= syncMin) {
                     log.Debug(GetEventSummary(ai));
                     log.Debug("Item is in sync range, so push sync flagged for Go.");
-                    OgcsPushTimer.ItemsQueued++;
-                    log.Info(OgcsPushTimer.ItemsQueued + " items changed since last sync.");
+                    int pushFlag = Convert.ToInt16(MainForm.Instance.GetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag"));
+                    pushFlag++;
+                    log.Info(pushFlag + " items changed since last sync.");
+                    MainForm.Instance.SetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag", pushFlag);
                 } else {
                     log.Fine("Item is outside of sync range.");
                 }
@@ -153,8 +159,10 @@ namespace OutlookGoogleCalendarSync {
 
             try {
                 log.Debug("Detected Outlook item removed, so push sync flagged for Go.");
-                OgcsPushTimer.ItemsQueued++;
-                log.Info(OgcsPushTimer.ItemsQueued + " items changed since last sync.");
+                int pushFlag = Convert.ToInt16(MainForm.Instance.GetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag"));
+                pushFlag++;
+                log.Info(pushFlag + " items changed since last sync.");
+                MainForm.Instance.SetControlPropertyThreadSafe(MainForm.Instance.bSyncNow, "Tag", pushFlag);
             } catch (System.Exception ex) {
                 log.Error(ex.Message);
             }

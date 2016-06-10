@@ -18,7 +18,10 @@ namespace OutlookGoogleCalendarSync {
         public NotificationTray NotificationTray { get; set; }
         public ToolTip ToolTips;
 
-        public SyncTimer OgcsTimer;
+        public Timer OgcsPushTimer;
+        private Timer ogcsTimer;
+        private DateTime lastSyncDate;
+
         private AbortableBackgroundWorker bwSync;
         public Boolean SyncingNow {
             get {
@@ -45,7 +48,13 @@ namespace OutlookGoogleCalendarSync {
             NotificationTray = new NotificationTray(this.trayIcon);
             
             log.Debug("Create the timer for the auto synchronisation");
-            OgcsTimer = new SyncTimer();
+            ogcsTimer = new Timer();
+            ogcsTimer.Tag = "AutoSyncTimer";
+            ogcsTimer.Tick += new EventHandler(ogcsTimer_Tick);
+
+            //Refresh synchronizations (last and next)
+            lLastSyncVal.Text = lastSyncDate.ToLongDateString() + " - " + lastSyncDate.ToLongTimeString();
+            setNextSync(getResyncInterval());
 
             //Set up listener for Outlook calendar changes
             if (Settings.Instance.OutlookPush) OutlookCalendar.Instance.RegisterForPushSync();
@@ -104,6 +113,7 @@ namespace OutlookGoogleCalendarSync {
                 "If IE settings have been changed, a restart of the Sync application may be required");
             #endregion
 
+            lastSyncDate = Settings.Instance.LastSyncDate;
             cbVerboseOutput.Checked = Settings.Instance.VerboseOutput;
             #region Outlook box
             gbEWS.Enabled = false;
@@ -352,6 +362,68 @@ namespace OutlookGoogleCalendarSync {
             Settings.Instance.Proxy.Configure();
         }
 
+        #region Autosync functions
+        int getResyncInterval() {
+            int min = Settings.Instance.SyncInterval;
+            if (Settings.Instance.SyncIntervalUnit == "Hours") {
+                min *= 60;
+            }
+            return min;
+        }
+
+        private void ogcsTimer_Tick(object sender, EventArgs e) {
+            log.Debug("Scheduled sync triggered.");
+
+            NotificationTray.ShowBubbleInfo("Autosyncing calendars: " + Settings.Instance.SyncDirection.Name + "...");
+            if (!this.SyncingNow) {
+                Sync_Click(sender, null);
+            } else {
+                log.Debug("Busy syncing already. Rescheduled for 5 mins time.");
+                setNextSync(5, fromNow:true);
+            }
+        }
+
+        public void OgcsPushTimer_Tick(object sender, EventArgs e) {
+            if (Convert.ToInt16(bSyncNow.Tag) != 0) {
+                log.Debug("Push sync triggered.");
+                NotificationTray.ShowBubbleInfo("Autosyncing calendars: " + Settings.Instance.SyncDirection.Name + "...");
+                if (!this.SyncingNow) {
+                    Sync_Click(sender, null);
+                } else {
+                    log.Debug("Busy syncing already. No need to push.");
+                    bSyncNow.Tag = 0;
+                }
+            }
+        }
+        
+        private void setNextSync(int delayMins, Boolean fromNow=false) {
+            if (tbInterval.Value != 0) {
+                DateTime nextSyncDate = lastSyncDate.AddMinutes(delayMins);
+                DateTime now = DateTime.Now;
+                if (fromNow)
+                    nextSyncDate = now.AddMinutes(delayMins);
+
+                if (ogcsTimer.Interval != (delayMins * 60000)) {
+                    ogcsTimer.Stop();
+                    TimeSpan diff = nextSyncDate - now;
+                    if (diff.TotalMinutes < 1) {
+                        nextSyncDate = now.AddMinutes(1);
+                        ogcsTimer.Interval = 1 * 60000;
+                    } else {
+                        ogcsTimer.Interval = (int)(diff.TotalMinutes * 60000);
+                    }
+                    ogcsTimer.Start();
+                }
+                lNextSyncVal.Text = nextSyncDate.ToLongDateString() + " - " + nextSyncDate.ToLongTimeString();
+                log.Info("Next sync scheduled for " + lNextSyncVal.Text);
+            } else {
+                lNextSyncVal.Text = "Inactive";
+                ogcsTimer.Stop();
+                log.Info("Schedule disabled.");
+            }
+        }
+        #endregion
+
         public void Sync_Click(object sender, EventArgs e) {
             try {
                 Sync_Requested(sender, e);
@@ -507,18 +579,17 @@ namespace OutlookGoogleCalendarSync {
                 lNextSyncVal.Text = cacheNextSync;
             } else {
                 if (syncOk) {
-                    OgcsTimer.LastSyncDate = SyncStarted;
-                    OgcsTimer.SetNextSync();
+                    lastSyncDate = SyncStarted;
+                    setNextSync(getResyncInterval());
                 } else {
                     if (Settings.Instance.SyncInterval != 0) {
                         Logboxout("Another sync has been scheduled to automatically run in 5 minutes time.");
-                        OgcsTimer.SetNextSync(5, fromNow: true);
+                        setNextSync(5, fromNow: true);
                     }
                 }
             }
             bSyncNow.Enabled = true;
-            if (OutlookCalendar.Instance.OgcsPushTimer != null)
-                OutlookCalendar.Instance.OgcsPushTimer.ItemsQueued = 0; //Reset Push flag regardless of success (don't want it trying every 2 mins)
+            bSyncNow.Tag = 0; //Reset Push flag regardless of success (don't want it trying every 2 mins)
 
             checkSyncMilestone();
         }
@@ -1322,8 +1393,7 @@ namespace OutlookGoogleCalendarSync {
                     tbInterval.Value = 10;
             }
             Settings.Instance.SyncInterval = (int)tbInterval.Value;
-            OgcsTimer.SetNextSync();
-            NotificationTray.UpdateAutoSyncItems();
+            setNextSync(getResyncInterval());
         }
 
         private void cbIntervalUnit_SelectedIndexChanged(object sender, EventArgs e) {
@@ -1331,7 +1401,7 @@ namespace OutlookGoogleCalendarSync {
                 tbInterval.Value = 10;
             }
             Settings.Instance.SyncIntervalUnit = cbIntervalUnit.Text;
-            OgcsTimer.SetNextSync();
+            setNextSync(getResyncInterval());
         }
 
         private void cbOutlookPush_CheckedChanged(object sender, EventArgs e) {

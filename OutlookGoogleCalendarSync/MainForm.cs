@@ -205,8 +205,10 @@ namespace OutlookGoogleCalendarSync {
             syncDirection.Items.Add(SyncDirection.OutlookToGoogle);
             syncDirection.Items.Add(SyncDirection.GoogleToOutlook);
             syncDirection.Items.Add(SyncDirection.Bidirectional);
+            syncDirection.Items.Add(SyncDirection.OutlookToGoogleSimple);
             cbObfuscateDirection.Items.Add(SyncDirection.OutlookToGoogle);
             cbObfuscateDirection.Items.Add(SyncDirection.GoogleToOutlook);
+            cbObfuscateDirection.Items.Add(SyncDirection.OutlookToGoogleSimple);
             //Sync Direction dropdown
             for (int i = 0; i < syncDirection.Items.Count; i++) {
                 SyncDirection sd = (syncDirection.Items[i] as SyncDirection);
@@ -599,20 +601,52 @@ namespace OutlookGoogleCalendarSync {
             Logboxout("Reading Outlook Calendar Entries...");
             List<AppointmentItem> outlookEntries = null;
             try {
+
+                if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple) {
+                    outlookEntries = OutlookCalendar.Instance.GetCalendarEntriesInRange(includeRecurrences: true);
+                    goto SkipGettingOutlookEntries;
+                }
+                
                 outlookEntries = OutlookCalendar.Instance.GetCalendarEntriesInRange();
+
+            SkipGettingOutlookEntries:
+                log.Debug("Got all Outlook entries in range including recurring entries");
+
             } catch (System.Exception ex) {
                 Logboxout("Unable to access the Outlook calendar.");
                 throw ex;
             }
             Logboxout(outlookEntries.Count + " Outlook calendar entries found.");
             Logboxout("--------------------------------------------------");
+
+            log.Debug(outlookEntries.Count + " Outlook calendar entries found.");
+            for (int i = outlookEntries.Count - 1; i >= 0; i--) {
+                log.Debug("Found " + i + "/" + outlookEntries.Count + ": " + OutlookCalendar.GetEventSummary(outlookEntries[i]));
+            }
+
             #endregion
 
             #region Read Google items
             Logboxout("Reading Google Calendar Entries...");
             List<Event> googleEntries = null;
             try {
+
+                if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple) {
+                    googleEntries = GoogleCalendar.Instance.GetCalendarEntriesInRange(Settings.Instance.SyncStart.AddMonths(-36),
+                                                                                  Settings.Instance.SyncEnd.AddMonths(36));
+                    for (int i = googleEntries.Count - 1; i >= 0; i--)
+                    {
+                        if (googleEntries[i].Status == "cancelled")
+                            googleEntries.RemoveAt(i);
+                    }
+                    goto SkipGettingGoogleEntries;
+                }
+                    
                 googleEntries = GoogleCalendar.Instance.GetCalendarEntriesInRange();
+
+            SkipGettingGoogleEntries:
+                log.Debug("Got +/-3 year range of Google entries");
+
             } catch (DotNetOpenAuth.Messaging.ProtocolException ex) {
                 Logboxout("ERROR: Unable to connect to the Google calendar.");
                 if (MessageBox.Show("Please ensure you can access the internet with Internet Explorer.\r\n" +
@@ -627,11 +661,20 @@ namespace OutlookGoogleCalendarSync {
                 throw ex;
             }
             Logboxout(googleEntries.Count + " Google calendar entries found.");
+
+            log.Debug(googleEntries.Count + " Google calendar entries found.");
+            for (int i = googleEntries.Count - 1; i >= 0; i--) {
+                log.Debug("Found " + i + "/" + googleEntries.Count + ": " + GoogleCalendar.GetEventSummary(googleEntries[i]));
+            }
+
             Recurrence.Instance.SeparateGoogleExceptions(googleEntries);
             if (Recurrence.Instance.GoogleExceptions != null && Recurrence.Instance.GoogleExceptions.Count > 0) 
                 Logboxout(Recurrence.Instance.GoogleExceptions.Count + " are exceptions to recurring events.");
             Logboxout("--------------------------------------------------");
             #endregion
+
+            if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple)
+                goto SkipNormalizeItemsInSyncWindow;            
 
             #region Normalise recurring items in sync window
             Logboxout("Total inc. recurring items spanning sync date range...");
@@ -715,16 +758,26 @@ namespace OutlookGoogleCalendarSync {
             Logboxout("--------------------------------------------------");
             #endregion
 
+        SkipNormalizeItemsInSyncWindow:
+            log.Debug("Skipped Normalizing recurring items in sync window for Outlook -> Google : Simple sync");
+
             Boolean success = true;
             String bubbleText = "";
             if (Settings.Instance.SyncDirection != SyncDirection.GoogleToOutlook) {
                 success = sync_outlookToGoogle(outlookEntries, googleEntries, ref bubbleText);
             }
             if (!success) return false;
+
+            if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple)
+                goto SkipGoogleToOutlookSync;
+
             if (Settings.Instance.SyncDirection != SyncDirection.OutlookToGoogle) {
                 if (bubbleText != "") bubbleText += "\r\n";
                 success = sync_googleToOutlook(googleEntries, outlookEntries, ref bubbleText);
             }
+
+        SkipGoogleToOutlookSync:
+
             if (bubbleText != "") NotificationTray.ShowBubbleInfo(bubbleText);
 
             for (int o = outlookEntries.Count() - 1; o >= 0; o--) {
@@ -793,7 +846,17 @@ namespace OutlookGoogleCalendarSync {
                     Logboxout("--------------------------------------------------");
                     Logboxout("Creating " + googleEntriesToBeCreated.Count + " Google calendar entries...");
                     try {
+
+                        if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple) {
+                            GoogleCalendar.Instance.CreateCalendarEntries(googleEntriesToBeCreated, ignoreRecurring: true);
+                            goto ignoreRecurringOnCreate;
+                        }
+
                         GoogleCalendar.Instance.CreateCalendarEntries(googleEntriesToBeCreated);
+
+                    ignoreRecurringOnCreate:
+                        log.Debug("Ignored creating recurring event details for Outlook -> Google : Simple sync");
+
                     } catch (UserCancelledSyncException ex) {
                         log.Info(ex.Message);
                         return false;
@@ -810,7 +873,17 @@ namespace OutlookGoogleCalendarSync {
                     Logboxout("--------------------------------------------------");
                     Logboxout("Comparing " + entriesToBeCompared.Count + " existing Google calendar entries...");
                     try {
+
+                        if (Settings.Instance.SyncDirection == SyncDirection.OutlookToGoogleSimple) {
+                            GoogleCalendar.Instance.UpdateCalendarEntries(entriesToBeCompared, ref entriesUpdated, ignoreRecurring: true);
+                            goto ignoreRecurringOnUpdate;
+                        }
+                        
                         GoogleCalendar.Instance.UpdateCalendarEntries(entriesToBeCompared, ref entriesUpdated);
+
+                    ignoreRecurringOnUpdate:
+                        log.Debug("Ignored updating recurring event details for Outlook -> Google : Simple sync");
+
                     } catch (UserCancelledSyncException ex) {
                         log.Info(ex.Message);
                         return false;

@@ -169,9 +169,9 @@ namespace OutlookGoogleCalendarSync {
         }
         #endregion
 
-        public List<AppointmentItem> GetCalendarEntriesInRange() {
+        public List<AppointmentItem> GetCalendarEntriesInRange(Boolean includeRecurrences = false) {
             List<AppointmentItem> filtered = new List<AppointmentItem>();
-            filtered = FilterCalendarEntries(UseOutlookCalendar.Items);
+            filtered = FilterCalendarEntries(UseOutlookCalendar.Items, includeRecurrences:includeRecurrences);
             
             if (Settings.Instance.CreateCSVFiles) {
                 ExportToCSV("Outputting all Appointments to CSV", "outlook_appointments.csv", filtered);
@@ -179,7 +179,7 @@ namespace OutlookGoogleCalendarSync {
             return filtered;
         }
 
-        public List<AppointmentItem> FilterCalendarEntries(Items OutlookItems) {
+        public List<AppointmentItem> FilterCalendarEntries(Items OutlookItems, Boolean includeRecurrences = false) {
             //Filtering info @ https://msdn.microsoft.com/en-us/library/cc513841%28v=office.12%29.aspx
 
             List<AppointmentItem> result = new List<AppointmentItem>();
@@ -188,6 +188,11 @@ namespace OutlookGoogleCalendarSync {
 
                 //OutlookItems.Sort("[Start]", Type.Missing);
                 OutlookItems.IncludeRecurrences = false;
+
+                if (includeRecurrences) {
+                    OutlookItems.Sort("[Start]", Type.Missing);
+                    OutlookItems.IncludeRecurrences = true;
+                }
 
                 DateTime min = Settings.Instance.SyncStart;
                 DateTime max = Settings.Instance.SyncEnd;
@@ -211,6 +216,12 @@ namespace OutlookGoogleCalendarSync {
                     result.Add(ai);
                 }
             }
+
+            if (includeRecurrences) {
+                log.Fine("Found " + result.Count + " Outlook Events over the range.");
+                return result;
+            }
+
             log.Fine("Filtered down to "+ result.Count);
             return result;
         }
@@ -265,7 +276,7 @@ namespace OutlookGoogleCalendarSync {
             AppointmentItem ai = IOutlook.UseOutlookCalendar().Items.Add() as AppointmentItem;
 
             //Add the Google event ID into Outlook appointment.
-            AddOGCSproperty(ref ai, gEventID, ev.Id);
+            AddOGCSproperty(ref ai, gEventID, GoogleCalendar.GetOGCSEventID(ev));
 
             ai.Start = new DateTime();
             ai.End = new DateTime();
@@ -662,7 +673,7 @@ namespace OutlookGoogleCalendarSync {
                                 sigEv = Obfuscate.ApplyRegex(sigEv, SyncDirection.GoogleToOutlook);
                         }
                         if (sigAi == sigEv) {
-                            AddOGCSproperty(ref ai, gEventID, ev.Id);
+                            AddOGCSproperty(ref ai, gEventID, GoogleCalendar.GetOGCSEventID(ev));
                             updateCalendarEntry_save(ai);
                             unclaimedAi.Remove(ai);
                             MainForm.Instance.Logboxout("Reclaimed: " + GetEventSummary(ai), verbose: true);
@@ -972,6 +983,13 @@ namespace OutlookGoogleCalendarSync {
         }
         private static void setOGCSlastModified(ref AppointmentItem ai) {
             addOGCSproperty(ref ai, Program.OGCSmodified, DateTime.Now);
+        }
+
+        public static String GetOGCSGlobalApptID(AppointmentItem ai) {
+            if (Settings.Instance.SyncDirection != SyncDirection.OutlookToGoogleSimple)
+                return OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai);
+            else
+                return GetEventSummary(ai) + OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai);
         }
         #endregion
         #endregion

@@ -408,7 +408,7 @@ namespace OutlookGoogleCalendarSync {
                         GoogleCalendar.AddOutlookID(ref ev, ai);
                         GoogleCalendar.Instance.UpdateCalendarEntry_save(ref ev);
                         return ev;
-                    } else if (gEntryID == OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai)) {
+                    } else if (gEntryID == OutlookCalendar.GetOGCSGlobalApptID(ai)) {
                         log.Fine("Found master event.");
                         return ev;
                     }
@@ -471,7 +471,7 @@ namespace OutlookGoogleCalendarSync {
                             continue;
                         }
 
-                        Event gExcp = Recurrence.Instance.GetGoogleInstance(oExcp, ev.RecurringEventId ?? ev.Id, OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai));
+                        Event gExcp = Recurrence.Instance.GetGoogleInstance(oExcp, ev.RecurringEventId ?? ev.Id, OutlookCalendar.GetOGCSGlobalApptID(ai));
                         if (gExcp != null) {
                             log.Debug("Matching Google Event recurrence found.");
                             if (gExcp.Status == "cancelled") {

@@ -264,11 +264,11 @@ namespace OutlookGoogleCalendarSync {
         }
 
         #region Create
-        public void CreateCalendarEntries(List<AppointmentItem> appointments) {
+        public void CreateCalendarEntries(List<AppointmentItem> appointments, Boolean ignoreRecurring = false) {
             foreach (AppointmentItem ai in appointments) {
                 Event newEvent = new Event();
                 try {
-                    newEvent = createCalendarEntry(ai);
+                    newEvent = createCalendarEntry(ai, ignoreRecurring);
                 } catch (System.Exception ex) {
                     if (!Settings.Instance.VerboseOutput) MainForm.Instance.Logboxout(OutlookCalendar.GetEventSummary(ai));
                     MainForm.Instance.Logboxout("WARNING: Event creation failed.\r\n" + ex.Message);
@@ -292,15 +292,22 @@ namespace OutlookGoogleCalendarSync {
                         throw new UserCancelledSyncException("User chose not to continue sync.");
                 }
 
+                if (ignoreRecurring)
+                    goto SkipRecurring;
+
                 if (ai.IsRecurring && Recurrence.HasExceptions(ai) && createdEvent != null) {
                     MainForm.Instance.Logboxout("This is a recurring item with some exceptions:-");
                     Recurrence.CreateGoogleExceptions(ai, createdEvent.Id);
                     MainForm.Instance.Logboxout("Recurring exceptions completed.");
                 }
+
+            SkipRecurring:
+                log.Debug("Skipped recurring check in CreateCalendarEntries");
+
             }
         }
 
-        private Event createCalendarEntry(AppointmentItem ai) {
+        private Event createCalendarEntry(AppointmentItem ai, Boolean ignoreRecurring) {
             string itemSummary = OutlookCalendar.GetEventSummary(ai);
             log.Debug("Processing >> " + itemSummary);
             MainForm.Instance.Logboxout(itemSummary, verbose: true);
@@ -312,10 +319,16 @@ namespace OutlookGoogleCalendarSync {
             ev.Start = new EventDateTime();
             ev.End = new EventDateTime();
 
+            if (ignoreRecurring)
+                goto SkipRecurring;
+
             ev.Recurrence = Recurrence.Instance.BuildGooglePattern(ai, ev);
             if (ev.Recurrence != null) {
                 ev = OutlookCalendar.Instance.IOutlook.IANAtimezone_set(ev, ai);
             }
+
+        SkipRecurring:
+            log.Debug("Skipped recurring check in createCalendarEntry");
                             
             if (ai.AllDayEvent) {
                 ev.Start.Date = ai.Start.ToString("yyyy-MM-dd");
@@ -410,7 +423,7 @@ namespace OutlookGoogleCalendarSync {
             } catch { }
             if (Settings.Instance.SyncDirection == SyncDirection.Bidirectional || gKeyExists) {
                 log.Debug("Storing the Google event ID in Outlook appointment.");
-                OutlookCalendar.AddOGCSproperty(ref ai, OutlookCalendar.gEventID, createdEvent.Id);
+                OutlookCalendar.AddOGCSproperty(ref ai, OutlookCalendar.gEventID, GetOGCSEventID(createdEvent));
                 ai.Save();
             }
             //DOS ourself by triggering API limit
@@ -426,14 +439,14 @@ namespace OutlookGoogleCalendarSync {
         #endregion
 
         #region Update
-        public void UpdateCalendarEntries(Dictionary<AppointmentItem, Event> entriesToBeCompared, ref int entriesUpdated) {
+        public void UpdateCalendarEntries(Dictionary<AppointmentItem, Event> entriesToBeCompared, ref int entriesUpdated, Boolean ignoreRecurring = false) {
             entriesUpdated = 0;
             for (int i = 0; i < entriesToBeCompared.Count; i++) {
                 KeyValuePair<AppointmentItem, Event> compare = entriesToBeCompared.ElementAt(i);
                 int itemModified = 0;
                 Event ev = new Event();
                 try {
-                    ev = UpdateCalendarEntry(compare.Key, compare.Value, ref itemModified);
+                    ev = UpdateCalendarEntry(compare.Key, compare.Value, ref itemModified, ignoreRecurring);
                 } catch (System.Exception ex) {
                     if (!Settings.Instance.VerboseOutput) MainForm.Instance.Logboxout(OutlookCalendar.GetEventSummary(compare.Key));
                     MainForm.Instance.Logboxout("WARNING: Event update failed.\r\n" + ex.Message);
@@ -459,6 +472,9 @@ namespace OutlookGoogleCalendarSync {
 
                 }
 
+                if (ignoreRecurring)
+                    goto SkipRecurring;
+
                 //Have to do this *before* any dummy update, else all the exceptions inherit the updated timestamp of the parent recurring event
                 Recurrence.UpdateGoogleExceptions(compare.Key, ev ?? compare.Value);  
 
@@ -479,10 +495,13 @@ namespace OutlookGoogleCalendarSync {
                     }
                 }
 
+            SkipRecurring:
+                log.Debug("Skipped recurring check in UpdateCalendarEntries");
+
             }
         }
 
-        public Event UpdateCalendarEntry(AppointmentItem ai, Event ev, ref int itemModified, Boolean forceCompare = false) {
+        public Event UpdateCalendarEntry(AppointmentItem ai, Event ev, ref int itemModified, Boolean forceCompare = false, Boolean ignoreRecurring = false) {
             if (!Settings.Instance.APIlimit_inEffect && GetOGCSproperty(ev, Program.APIlimitHit)) {
                 log.Fine("Back processing Event affected by attendee API limit.");
             } else {
@@ -541,6 +560,9 @@ namespace OutlookGoogleCalendarSync {
                 }
             } 
 
+            if (ignoreRecurring)
+                goto SkipRecurring;
+
             List<String> oRrules = Recurrence.Instance.BuildGooglePattern(ai, ev);
             if (ev.Recurrence != null) {
                 for (int r = 0; r < ev.Recurrence.Count; r++) {
@@ -573,6 +595,9 @@ namespace OutlookGoogleCalendarSync {
             if (ev.Recurrence != null && ev.RecurringEventId == null) {
                 ev = OutlookCalendar.Instance.IOutlook.IANAtimezone_set(ev, ai);
             }
+
+        SkipRecurring:
+            log.Debug("Skipped recurring check in UpdateCalendarEntry");
             
             String subjectObfuscated = Obfuscate.ApplyRegex(ai.Subject, SyncDirection.OutlookToGoogle);
             if (MainForm.CompareAttribute("Subject", SyncDirection.OutlookToGoogle, ev.Summary, subjectObfuscated, sb, ref itemModified)) {
@@ -882,7 +907,7 @@ namespace OutlookGoogleCalendarSync {
                     for (int o = outlook.Count - 1; o >= 0; o--) {
                         try {
                             log.Fine("Checking "+ OutlookCalendar.GetEventSummary(outlook[o]));
-                            String compare_oGlobalID = OutlookCalendar.Instance.IOutlook.GetGlobalApptID(outlook[o]);
+                            String compare_oGlobalID = OutlookCalendar.GetOGCSGlobalApptID(outlook[o]);
                             if (compare_oGlobalID == outlook[o].EntryID) {
                                 log.Debug("Can't migrate Event to GlobalAppointmentID.");
                             } else if (compare_gEntryID.StartsWith(outlook[o].EntryID)) {
@@ -1387,7 +1412,7 @@ namespace OutlookGoogleCalendarSync {
             //Add the Outlook appointment ID into Google event.
             //This will make comparison more efficient and set the scene for 2-way sync.
 
-            addOGCSproperty(ref ev, oEntryID, OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai));
+            addOGCSproperty(ref ev, oEntryID, OutlookCalendar.GetOGCSGlobalApptID(ai));
         }
 
         private static void addOGCSproperty(ref Event ev, String key, String value) {
@@ -1446,6 +1471,13 @@ namespace OutlookGoogleCalendarSync {
         }
         private static void setOGCSlastModified(ref Event ev) {
             addOGCSproperty(ref ev, Program.OGCSmodified, DateTime.Now);
+        }
+
+        public static String GetOGCSEventID(Event ev) {
+            if (Settings.Instance.SyncDirection != SyncDirection.OutlookToGoogleSimple)
+                return ev.Id;
+            else
+                return GetEventSummary(ev) + ev.Id;
         }
         #endregion
         #endregion

@@ -261,6 +261,7 @@ namespace OutlookGoogleCalendarSync {
             dtDNDend.Enabled = Settings.Instance.AddReminders;
             dtDNDstart.Value = Settings.Instance.ReminderDNDstart;
             dtDNDend.Value = Settings.Instance.ReminderDNDend;
+            tbNumberAttendees.Value = Settings.Instance.NumberAttendees;
 
             this.gbSyncOptions_What.ResumeLayout();
             #endregion
@@ -1526,6 +1527,11 @@ namespace OutlookGoogleCalendarSync {
 
         private void cbAddAttendees_CheckedChanged(object sender, EventArgs e) {
             Settings.Instance.AddAttendees = cbAddAttendees.Checked;
+            this.tbNumberAttendees.Enabled = cbAddAttendees.Checked;
+        }
+        private void tbNumberAttendees_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.NumberAttendees = (int)tbNumberAttendees.Value;
         }
         #endregion
         #endregion

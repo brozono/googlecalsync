@@ -189,6 +189,8 @@
             this.pbSocialTwitterFollow = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tbNumberAttendees = new System.Windows.Forms.NumericUpDown();
+            this.lNumberAttendees = new System.Windows.Forms.Label();
             this.tabApp.SuspendLayout();
             this.tabPage_Sync.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
@@ -218,6 +220,7 @@
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialGplusCommunity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialTwitterFollow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).BeginInit();
             this.SuspendLayout();
             // 
             // tabApp
@@ -2256,6 +2259,43 @@
             // 
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Outlook Google Calendar Sync";
+            //
+            // ADDED STUFF
+            //
+            this.gbSyncOptions_What.Controls.Add(this.tbNumberAttendees);
+            this.gbSyncOptions_What.Controls.Add(this.lNumberAttendees);
+            // 
+            // tbNumberAttendees
+            // 
+            this.tbNumberAttendees.Enabled = this.cbAddAttendees.Checked;
+            this.tbNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbNumberAttendees.Location = new System.Drawing.Point(127, 54);
+            this.tbNumberAttendees.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
+            this.tbNumberAttendees.Name = "tbNumberAttendees";
+            this.tbNumberAttendees.Size = new System.Drawing.Size(40, 20);
+            this.tbNumberAttendees.TabIndex = 36;
+            this.tbNumberAttendees.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbNumberAttendees.Value = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.tbNumberAttendees.ValueChanged += new System.EventHandler(this.tbNumberAttendees_ValueChanged);
+            // 
+            // lNumberAttendees
+            // 
+            this.lNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lNumberAttendees.Location = new System.Drawing.Point(167, 58);
+            this.lNumberAttendees.Name = "lNumberAttendees";
+            this.lNumberAttendees.Size = new System.Drawing.Size(140, 14);
+            this.lNumberAttendees.TabIndex = 37;
+            this.lNumberAttendees.Text = "Max number of attendees";
             // 
             // MainForm
             // 
@@ -2315,6 +2355,7 @@
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialGplusCommunity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialTwitterFollow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2474,5 +2515,7 @@
         public System.Windows.Forms.ComboBox cbIntervalUnit;
         public System.Windows.Forms.NumericUpDown tbInterval;
         public System.Windows.Forms.Label lNextSyncVal;
+        private System.Windows.Forms.NumericUpDown tbNumberAttendees;
+        private System.Windows.Forms.Label lNumberAttendees;
     }
 }

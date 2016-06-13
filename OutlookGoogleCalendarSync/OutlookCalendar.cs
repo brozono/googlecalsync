@@ -817,7 +817,7 @@ namespace OutlookGoogleCalendarSync {
             csv.Append("\"" + (ai.OptionalAttendees==null?"":ai.OptionalAttendees) + "\",");
             csv.Append(ai.ReminderSet + ",");
             csv.Append(ai.ReminderMinutesBeforeStart.ToString() + ",");
-            csv.Append(OutlookCalendar.Instance.IOutlook.GetGlobalApptID(ai) + ",");
+            csv.Append(OutlookCalendar.GetOGCSGlobalApptID(ai) + ",");
             if (ai.UserProperties[gEventID] != null)
                 csv.Append(ai.UserProperties[gEventID].Value.ToString());
 

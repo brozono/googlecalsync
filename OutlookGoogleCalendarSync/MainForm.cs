@@ -283,6 +283,13 @@ namespace OutlookGoogleCalendarSync {
             }
             updateGUIsettings_Proxy();
             #endregion
+            #region Dev Options
+            cbGoogleDevOverride.Checked = Settings.Instance.OverrideDeveloper;
+            txtGoogleDevClientID.Text = Settings.Instance.GoogleDeveloperClientID;
+            txtGoogleDevClientSecret.Text = Settings.Instance.GoogleDeveloperClientSecret;
+            cbEnableAutoRetry.Checked = Settings.Instance.EnableAutoRetry;
+            tbAutoRetryDelay.Value = Settings.Instance.AutoRetryDelayMin;
+            #endregion
             #region About
             int r = 0;
             dgAbout.Rows.Add();
@@ -381,6 +388,13 @@ namespace OutlookGoogleCalendarSync {
             if (!this.SyncingNow) {
                 Sync_Click(sender, null);
             } else {
+
+                if (Settings.Instance.AutoRetryDelayMin != 0) {
+                    log.Debug("Busy syncing already. Rescheduled for " + Settings.Instance.AutoRetryDelayMin + " mins time.");
+                    setNextSync(Settings.Instance.AutoRetryDelayMin, fromNow: true);
+                    return;
+                }
+
                 log.Debug("Busy syncing already. Rescheduled for 5 mins time.");
                 setNextSync(5, fromNow:true);
             }
@@ -523,6 +537,14 @@ namespace OutlookGoogleCalendarSync {
             Social.TrackSync();
             GoogleCalendar.Instance.GetCalendarSettings();
             while (!syncOk) {
+
+                if (failedAttempts > 0 && Settings.Instance.EnableAutoRetry)
+                {
+                    bSyncNow.Text = "Start Sync";
+                    NotificationTray.UpdateItem("sync", "&Sync Now");
+                    break;
+                }
+
                 if (failedAttempts > 0 &&
                     MessageBox.Show("The synchronisation failed - check the Sync tab for further details.\r\nDo you want to try again?", "Sync Failed",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.No) 
@@ -585,10 +607,21 @@ namespace OutlookGoogleCalendarSync {
                     lastSyncDate = SyncStarted;
                     setNextSync(getResyncInterval());
                 } else {
+
+                    if (Settings.Instance.AutoRetryDelayMin != 0) {
+                        Logboxout("Another sync has been scheduled to automatically run in " + Settings.Instance.AutoRetryDelayMin + " minutes time.");
+                        setNextSync(Settings.Instance.AutoRetryDelayMin, fromNow: true);
+                        goto SkipSettingFor5Minutes;
+                    }
+
                     if (Settings.Instance.SyncInterval != 0) {
                         Logboxout("Another sync has been scheduled to automatically run in 5 minutes time.");
                         setNextSync(5, fromNow: true);
                     }
+
+                SkipSettingFor5Minutes:
+                    log.Debug("Skipped the 5 minute reschedule");
+
                 }
             }
             bSyncNow.Enabled = true;
@@ -649,6 +682,10 @@ namespace OutlookGoogleCalendarSync {
                 log.Debug("Got +/-3 year range of Google entries");
 
             } catch (DotNetOpenAuth.Messaging.ProtocolException ex) {
+
+                if (Settings.Instance.EnableAutoRetry)
+                    goto SkipIECheck;
+
                 Logboxout("ERROR: Unable to connect to the Google calendar.");
                 if (MessageBox.Show("Please ensure you can access the internet with Internet Explorer.\r\n" +
                     "Test it now? If successful, please retry synchronising your calendar.",
@@ -656,6 +693,9 @@ namespace OutlookGoogleCalendarSync {
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                     System.Diagnostics.Process.Start("iexplore.exe", "http://www.google.com");
                 }
+
+            SkipIECheck:
+
                 throw ex;
             } catch (System.Exception ex) {
                 Logboxout("ERROR: Unable to connect to the Google calendar.");
@@ -1610,6 +1650,35 @@ namespace OutlookGoogleCalendarSync {
         #endregion
         #endregion
 
+        #region Dev Options
+        private void cbGoogleDevOverride_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.OverrideDeveloper = cbGoogleDevOverride.Checked;
+            this.txtGoogleDevClientID.Enabled = cbGoogleDevOverride.Checked;
+            this.txtGoogleDevClientSecret.Enabled = cbGoogleDevOverride.Checked;
+        }
+        private void txtGoogleDevClientID_TextChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.GoogleDeveloperClientID = txtGoogleDevClientID.Text;
+        }
+        private void txtGoogleDevClientSecret_TextChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.GoogleDeveloperClientSecret = txtGoogleDevClientSecret.Text;
+        }
+        private void cbEnableAutoRetry_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.EnableAutoRetry = cbEnableAutoRetry.Checked;
+            this.tbAutoRetryDelay.Enabled = cbEnableAutoRetry.Checked;
+        }
+        private void tbAutoRetryDelay_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.Instance.AutoRetryDelayMin = (int)tbAutoRetryDelay.Value;
+        }
+        private void lGoogleConsolLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start(lGoogleConsolLink.Text);
+        }
+        #endregion
+
         #region Help
         private void linkTShoot_loglevel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             this.tabApp.SelectedTab = this.tabPage_Settings;
@@ -1692,8 +1761,16 @@ namespace OutlookGoogleCalendarSync {
                 case 1000: isMilestone = true; break;
             }
             if (isMilestone) {
+
+                if (Settings.Instance.EnableAutoRetry)
+                    goto SkipSpreadTheWord;
+
                 if (MessageBox.Show(blurb, "Spread the Word", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.OK)
                     tabApp.SelectedTab = tabPage_Social;
+
+                SkipSpreadTheWord:
+                log.Debug("Skipped spreading the word");
+
             }
         }
 

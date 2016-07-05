@@ -115,6 +115,8 @@
             this.cbAddDescription = new System.Windows.Forms.CheckBox();
             this.cbReminderDND = new System.Windows.Forms.CheckBox();
             this.cbUseGoogleDefaultReminder = new System.Windows.Forms.CheckBox();
+            this.tbNumberAttendees = new System.Windows.Forms.NumericUpDown();
+            this.lNumberAttendees = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.tabAppBehaviour = new System.Windows.Forms.TabPage();
             this.cbMinimiseNotClose = new System.Windows.Forms.CheckBox();
@@ -141,6 +143,20 @@
             this.cbMinimiseToTray = new System.Windows.Forms.CheckBox();
             this.cbStartInTray = new System.Windows.Forms.CheckBox();
             this.cbCreateFiles = new System.Windows.Forms.CheckBox();
+            this.tabDevOptions = new System.Windows.Forms.TabPage();
+            this.gbAutoRetryErrors = new System.Windows.Forms.GroupBox();
+            this.lRetryDelay = new System.Windows.Forms.Label();
+            this.tbAutoRetryDelay = new System.Windows.Forms.NumericUpDown();
+            this.cbEnableAutoRetry = new System.Windows.Forms.CheckBox();
+            this.lDeveloperOptions = new System.Windows.Forms.Label();
+            this.gbGoogleDeveloperSettings = new System.Windows.Forms.GroupBox();
+            this.lGoogleConsolLink = new System.Windows.Forms.LinkLabel();
+            this.lGoogleDevInstructions = new System.Windows.Forms.Label();
+            this.txtGoogleDevClientSecret = new System.Windows.Forms.TextBox();
+            this.lClientSecret = new System.Windows.Forms.Label();
+            this.txtGoogleDevClientID = new System.Windows.Forms.TextBox();
+            this.lClientID = new System.Windows.Forms.Label();
+            this.cbGoogleDevOverride = new System.Windows.Forms.CheckBox();
             this.bSave = new System.Windows.Forms.Button();
             this.tabPage_Help = new System.Windows.Forms.TabPage();
             this.tbTS2 = new System.Windows.Forms.TextBox();
@@ -189,8 +205,6 @@
             this.pbSocialTwitterFollow = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.tbNumberAttendees = new System.Windows.Forms.NumericUpDown();
-            this.lNumberAttendees = new System.Windows.Forms.Label();
             this.tabApp.SuspendLayout();
             this.tabPage_Sync.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
@@ -208,8 +222,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgObfuscateRegex)).BeginInit();
             this.WhatPostit.SuspendLayout();
             this.gbSyncOptions_What.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).BeginInit();
             this.tabAppBehaviour.SuspendLayout();
             this.gbProxy.SuspendLayout();
+            this.tabDevOptions.SuspendLayout();
+            this.gbAutoRetryErrors.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbAutoRetryDelay)).BeginInit();
+            this.gbGoogleDeveloperSettings.SuspendLayout();
             this.tabPage_Help.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPage_About.SuspendLayout();
@@ -220,7 +239,6 @@
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialGplusCommunity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialTwitterFollow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).BeginInit();
             this.SuspendLayout();
             // 
             // tabApp
@@ -391,6 +409,7 @@
             this.tabAppSettings.Controls.Add(this.tabGoogle);
             this.tabAppSettings.Controls.Add(this.tabSyncOptions);
             this.tabAppSettings.Controls.Add(this.tabAppBehaviour);
+            this.tabAppSettings.Controls.Add(this.tabDevOptions);
             this.tabAppSettings.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabAppSettings.ItemSize = new System.Drawing.Size(35, 75);
             this.tabAppSettings.Location = new System.Drawing.Point(6, 7);
@@ -1157,6 +1176,8 @@
             this.gbSyncOptions_What.Controls.Add(this.cbAddDescription);
             this.gbSyncOptions_What.Controls.Add(this.cbReminderDND);
             this.gbSyncOptions_What.Controls.Add(this.cbUseGoogleDefaultReminder);
+            this.gbSyncOptions_What.Controls.Add(this.tbNumberAttendees);
+            this.gbSyncOptions_What.Controls.Add(this.lNumberAttendees);
             this.gbSyncOptions_What.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbSyncOptions_What.ForeColor = System.Drawing.SystemColors.MenuHighlight;
             this.gbSyncOptions_What.Location = new System.Drawing.Point(12, 273);
@@ -1286,6 +1307,38 @@
             this.cbUseGoogleDefaultReminder.Text = "Use Google default";
             this.cbUseGoogleDefaultReminder.UseVisualStyleBackColor = true;
             this.cbUseGoogleDefaultReminder.CheckedChanged += new System.EventHandler(this.cbUseGoogleDefaultReminder_CheckedChanged);
+            // 
+            // tbNumberAttendees
+            // 
+            this.tbNumberAttendees.Enabled = this.cbAddAttendees.Checked;
+            this.tbNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbNumberAttendees.Location = new System.Drawing.Point(127, 54);
+            this.tbNumberAttendees.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
+            this.tbNumberAttendees.Name = "tbNumberAttendees";
+            this.tbNumberAttendees.Size = new System.Drawing.Size(40, 20);
+            this.tbNumberAttendees.TabIndex = 36;
+            this.tbNumberAttendees.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbNumberAttendees.Value = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.tbNumberAttendees.ValueChanged += new System.EventHandler(this.tbNumberAttendees_ValueChanged);
+            // 
+            // lNumberAttendees
+            // 
+            this.lNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lNumberAttendees.Location = new System.Drawing.Point(167, 58);
+            this.lNumberAttendees.Name = "lNumberAttendees";
+            this.lNumberAttendees.Size = new System.Drawing.Size(140, 14);
+            this.lNumberAttendees.TabIndex = 37;
+            this.lNumberAttendees.Text = "Max number of attendees";
             // 
             // label15
             // 
@@ -1623,6 +1676,187 @@
             this.cbCreateFiles.Text = "Create CSV files of calendar entries";
             this.cbCreateFiles.UseVisualStyleBackColor = true;
             this.cbCreateFiles.CheckedChanged += new System.EventHandler(this.cbCreateFiles_CheckedChanged);
+            // 
+            // tabDevOptions
+            // 
+            this.tabDevOptions.BackColor = System.Drawing.Color.White;
+            this.tabDevOptions.Controls.Add(this.gbAutoRetryErrors);
+            this.tabDevOptions.Controls.Add(this.lDeveloperOptions);
+            this.tabDevOptions.Controls.Add(this.gbGoogleDeveloperSettings);
+            this.tabDevOptions.Location = new System.Drawing.Point(79, 4);
+            this.tabDevOptions.Name = "tabDevOptions";
+            this.tabDevOptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDevOptions.Size = new System.Drawing.Size(392, 462);
+            this.tabDevOptions.TabIndex = 4;
+            this.tabDevOptions.Text = "Developer Options";
+            // 
+            // gbAutoRetryErrors
+            // 
+            this.gbAutoRetryErrors.Controls.Add(this.lRetryDelay);
+            this.gbAutoRetryErrors.Controls.Add(this.tbAutoRetryDelay);
+            this.gbAutoRetryErrors.Controls.Add(this.cbEnableAutoRetry);
+            this.gbAutoRetryErrors.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbAutoRetryErrors.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.gbAutoRetryErrors.Location = new System.Drawing.Point(12, 230);
+            this.gbAutoRetryErrors.Name = "gbAutoRetryErrors";
+            this.gbAutoRetryErrors.Size = new System.Drawing.Size(369, 83);
+            this.gbAutoRetryErrors.TabIndex = 2;
+            this.gbAutoRetryErrors.TabStop = false;
+            this.gbAutoRetryErrors.Text = "Auto Retry on Errors";
+            // 
+            // lRetryDelay
+            // 
+            this.lRetryDelay.AutoSize = true;
+            this.lRetryDelay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lRetryDelay.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lRetryDelay.Location = new System.Drawing.Point(83, 50);
+            this.lRetryDelay.Name = "lRetryDelay";
+            this.lRetryDelay.Size = new System.Drawing.Size(87, 13);
+            this.lRetryDelay.TabIndex = 2;
+            this.lRetryDelay.Text = "Retry Delay (min)";
+            // 
+            // tbAutoRetryDelay
+            // 
+            this.tbAutoRetryDelay.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbAutoRetryDelay.Location = new System.Drawing.Point(18, 44);
+            this.tbAutoRetryDelay.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.tbAutoRetryDelay.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbAutoRetryDelay.Name = "tbAutoRetryDelay";
+            this.tbAutoRetryDelay.Size = new System.Drawing.Size(58, 20);
+            this.tbAutoRetryDelay.TabIndex = 1;
+            this.tbAutoRetryDelay.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbAutoRetryDelay.ValueChanged += new System.EventHandler(this.tbAutoRetryDelay_ValueChanged);
+            // 
+            // cbEnableAutoRetry
+            // 
+            this.cbEnableAutoRetry.AutoSize = true;
+            this.cbEnableAutoRetry.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbEnableAutoRetry.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cbEnableAutoRetry.Location = new System.Drawing.Point(18, 21);
+            this.cbEnableAutoRetry.Name = "cbEnableAutoRetry";
+            this.cbEnableAutoRetry.Size = new System.Drawing.Size(112, 17);
+            this.cbEnableAutoRetry.TabIndex = 0;
+            this.cbEnableAutoRetry.Text = "Enable Auto Retry";
+            this.cbEnableAutoRetry.UseVisualStyleBackColor = true;
+            this.cbEnableAutoRetry.CheckedChanged += new System.EventHandler(this.cbEnableAutoRetry_CheckedChanged);
+            // 
+            // lDeveloperOptions
+            // 
+            this.lDeveloperOptions.AutoSize = true;
+            this.lDeveloperOptions.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lDeveloperOptions.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.lDeveloperOptions.Location = new System.Drawing.Point(139, 12);
+            this.lDeveloperOptions.Name = "lDeveloperOptions";
+            this.lDeveloperOptions.Size = new System.Drawing.Size(117, 15);
+            this.lDeveloperOptions.TabIndex = 1;
+            this.lDeveloperOptions.Text = "Developer Options";
+            this.lDeveloperOptions.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // gbGoogleDeveloperSettings
+            // 
+            this.gbGoogleDeveloperSettings.Controls.Add(this.lGoogleConsolLink);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.lGoogleDevInstructions);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.txtGoogleDevClientSecret);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.lClientSecret);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.txtGoogleDevClientID);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.lClientID);
+            this.gbGoogleDeveloperSettings.Controls.Add(this.cbGoogleDevOverride);
+            this.gbGoogleDeveloperSettings.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbGoogleDeveloperSettings.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.gbGoogleDeveloperSettings.Location = new System.Drawing.Point(12, 41);
+            this.gbGoogleDeveloperSettings.Name = "gbGoogleDeveloperSettings";
+            this.gbGoogleDeveloperSettings.Size = new System.Drawing.Size(369, 177);
+            this.gbGoogleDeveloperSettings.TabIndex = 0;
+            this.gbGoogleDeveloperSettings.TabStop = false;
+            this.gbGoogleDeveloperSettings.Text = "Google Developer Setting";
+            // 
+            // lGoogleConsolLink
+            // 
+            this.lGoogleConsolLink.AutoSize = true;
+            this.lGoogleConsolLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lGoogleConsolLink.Location = new System.Drawing.Point(35, 150);
+            this.lGoogleConsolLink.Name = "lGoogleConsolLink";
+            this.lGoogleConsolLink.Size = new System.Drawing.Size(273, 13);
+            this.lGoogleConsolLink.TabIndex = 6;
+            this.lGoogleConsolLink.TabStop = true;
+            this.lGoogleConsolLink.Text = "https://console.developers.google.com/apis/credentials";
+            this.lGoogleConsolLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lGoogleConsolLink_LinkClicked);
+            // 
+            // lGoogleDevInstructions
+            // 
+            this.lGoogleDevInstructions.AutoSize = true;
+            this.lGoogleDevInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lGoogleDevInstructions.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lGoogleDevInstructions.Location = new System.Drawing.Point(18, 133);
+            this.lGoogleDevInstructions.Name = "lGoogleDevInstructions";
+            this.lGoogleDevInstructions.Size = new System.Drawing.Size(284, 13);
+            this.lGoogleDevInstructions.TabIndex = 5;
+            this.lGoogleDevInstructions.Text = "You can get those values from Google Developer Console:";
+            // 
+            // txtGoogleDevClientSecret
+            // 
+            this.txtGoogleDevClientSecret.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGoogleDevClientSecret.Location = new System.Drawing.Point(18, 105);
+            this.txtGoogleDevClientSecret.Name = "txtGoogleDevClientSecret";
+            this.txtGoogleDevClientSecret.Size = new System.Drawing.Size(316, 20);
+            this.txtGoogleDevClientSecret.TabIndex = 4;
+            this.txtGoogleDevClientSecret.TextChanged += new System.EventHandler(this.txtGoogleDevClientSecret_TextChanged);
+            // 
+            // lClientSecret
+            // 
+            this.lClientSecret.AutoSize = true;
+            this.lClientSecret.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lClientSecret.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lClientSecret.Location = new System.Drawing.Point(18, 88);
+            this.lClientSecret.Name = "lClientSecret";
+            this.lClientSecret.Size = new System.Drawing.Size(67, 13);
+            this.lClientSecret.TabIndex = 3;
+            this.lClientSecret.Text = "Client Secret";
+            // 
+            // txtGoogleDevClientID
+            // 
+            this.txtGoogleDevClientID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGoogleDevClientID.Location = new System.Drawing.Point(18, 61);
+            this.txtGoogleDevClientID.Name = "txtGoogleDevClientID";
+            this.txtGoogleDevClientID.Size = new System.Drawing.Size(316, 20);
+            this.txtGoogleDevClientID.TabIndex = 2;
+            this.txtGoogleDevClientID.TextChanged += new System.EventHandler(this.txtGoogleDevClientID_TextChanged);
+            // 
+            // lClientID
+            // 
+            this.lClientID.AutoSize = true;
+            this.lClientID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lClientID.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lClientID.Location = new System.Drawing.Point(18, 44);
+            this.lClientID.Name = "lClientID";
+            this.lClientID.Size = new System.Drawing.Size(47, 13);
+            this.lClientID.TabIndex = 1;
+            this.lClientID.Text = "Client ID";
+            // 
+            // cbGoogleDevOverride
+            // 
+            this.cbGoogleDevOverride.AutoSize = true;
+            this.cbGoogleDevOverride.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbGoogleDevOverride.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cbGoogleDevOverride.Location = new System.Drawing.Point(18, 20);
+            this.cbGoogleDevOverride.Name = "cbGoogleDevOverride";
+            this.cbGoogleDevOverride.Size = new System.Drawing.Size(108, 17);
+            this.cbGoogleDevOverride.TabIndex = 0;
+            this.cbGoogleDevOverride.Text = "Override Defaults";
+            this.cbGoogleDevOverride.UseVisualStyleBackColor = true;
+            this.cbGoogleDevOverride.CheckedChanged += new System.EventHandler(this.cbGoogleDevOverride_CheckedChanged);
             // 
             // bSave
             // 
@@ -2259,43 +2493,6 @@
             // 
             this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
             this.trayIcon.Text = "Outlook Google Calendar Sync";
-            //
-            // ADDED STUFF
-            //
-            this.gbSyncOptions_What.Controls.Add(this.tbNumberAttendees);
-            this.gbSyncOptions_What.Controls.Add(this.lNumberAttendees);
-            // 
-            // tbNumberAttendees
-            // 
-            this.tbNumberAttendees.Enabled = this.cbAddAttendees.Checked;
-            this.tbNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbNumberAttendees.Location = new System.Drawing.Point(127, 54);
-            this.tbNumberAttendees.Maximum = new decimal(new int[] {
-            365,
-            0,
-            0,
-            0});
-            this.tbNumberAttendees.Name = "tbNumberAttendees";
-            this.tbNumberAttendees.Size = new System.Drawing.Size(40, 20);
-            this.tbNumberAttendees.TabIndex = 36;
-            this.tbNumberAttendees.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.tbNumberAttendees.Value = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-            this.tbNumberAttendees.ValueChanged += new System.EventHandler(this.tbNumberAttendees_ValueChanged);
-            // 
-            // lNumberAttendees
-            // 
-            this.lNumberAttendees.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lNumberAttendees.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lNumberAttendees.Location = new System.Drawing.Point(167, 58);
-            this.lNumberAttendees.Name = "lNumberAttendees";
-            this.lNumberAttendees.Size = new System.Drawing.Size(140, 14);
-            this.lNumberAttendees.TabIndex = 37;
-            this.lNumberAttendees.Text = "Max number of attendees";
             // 
             // MainForm
             // 
@@ -2336,10 +2533,18 @@
             this.WhatPostit.ResumeLayout(false);
             this.gbSyncOptions_What.ResumeLayout(false);
             this.gbSyncOptions_What.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).EndInit();
             this.tabAppBehaviour.ResumeLayout(false);
             this.tabAppBehaviour.PerformLayout();
             this.gbProxy.ResumeLayout(false);
             this.gbProxy.PerformLayout();
+            this.tabDevOptions.ResumeLayout(false);
+            this.tabDevOptions.PerformLayout();
+            this.gbAutoRetryErrors.ResumeLayout(false);
+            this.gbAutoRetryErrors.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbAutoRetryDelay)).EndInit();
+            this.gbGoogleDeveloperSettings.ResumeLayout(false);
+            this.gbGoogleDeveloperSettings.PerformLayout();
             this.tabPage_Help.ResumeLayout(false);
             this.tabPage_Help.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -2355,7 +2560,6 @@
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialGplusCommunity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbSocialTwitterFollow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2470,6 +2674,8 @@
         private System.Windows.Forms.CheckBox cbAddReminders;
         private System.Windows.Forms.Label lAttributes;
         private System.Windows.Forms.CheckBox cbAddAttendees;
+        private System.Windows.Forms.NumericUpDown tbNumberAttendees;
+        private System.Windows.Forms.Label lNumberAttendees;
         private System.Windows.Forms.CheckBox cbAddDescription;
         private System.Windows.Forms.GroupBox gbSyncOptions_How;
         private System.Windows.Forms.CheckBox cbOfuscate;
@@ -2515,7 +2721,19 @@
         public System.Windows.Forms.ComboBox cbIntervalUnit;
         public System.Windows.Forms.NumericUpDown tbInterval;
         public System.Windows.Forms.Label lNextSyncVal;
-        private System.Windows.Forms.NumericUpDown tbNumberAttendees;
-        private System.Windows.Forms.Label lNumberAttendees;
+        private System.Windows.Forms.TabPage tabDevOptions;
+        private System.Windows.Forms.Label lClientID;
+        private System.Windows.Forms.GroupBox gbGoogleDeveloperSettings;
+        private System.Windows.Forms.CheckBox cbGoogleDevOverride;
+        private System.Windows.Forms.Label lClientSecret;
+        private System.Windows.Forms.TextBox txtGoogleDevClientID;
+        private System.Windows.Forms.TextBox txtGoogleDevClientSecret;
+        private System.Windows.Forms.Label lDeveloperOptions;
+        private System.Windows.Forms.GroupBox gbAutoRetryErrors;
+        private System.Windows.Forms.CheckBox cbEnableAutoRetry;
+        private System.Windows.Forms.Label lRetryDelay;
+        private System.Windows.Forms.NumericUpDown tbAutoRetryDelay;
+        private System.Windows.Forms.Label lGoogleDevInstructions;
+        private System.Windows.Forms.LinkLabel lGoogleConsolLink;
     }
 }

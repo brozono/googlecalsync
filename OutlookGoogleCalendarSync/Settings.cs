@@ -82,6 +82,13 @@ namespace OutlookGoogleCalendarSync {
 
             alphaReleases = false;
             Subscribed = DateTime.Parse("01-Jan-2000");
+
+            OverrideDeveloper = false;
+            GoogleDeveloperClientID = "";
+            GoogleDeveloperClientSecret = "";
+
+            EnableAutoRetry = false;
+            AutoRetryDelayMin = 1;
             
             lastSyncDate = new DateTime(0);
             completedSyncs = 0;
@@ -176,6 +183,13 @@ namespace OutlookGoogleCalendarSync {
         [DataMember] public String LoggingLevel { get; set; }
         //Proxy
         [DataMember] public SettingsProxy Proxy { get; set; }
+        #endregion
+        #region Dev Options
+        [DataMember] public bool OverrideDeveloper { get; set; }
+        [DataMember] public string GoogleDeveloperClientID { get; set; }
+        [DataMember] public string GoogleDeveloperClientSecret { get; set; }
+        [DataMember] public bool EnableAutoRetry { get; set; }
+        [DataMember] public int AutoRetryDelayMin { get; set; }
         #endregion
         #region About
         [DataMember] public string Version {
@@ -292,6 +306,13 @@ namespace OutlookGoogleCalendarSync {
             //To pick up from settings.xml file:
             //((log4net.Repository.Hierarchy.Hierarchy)log.Logger.Repository).Root.Level.Name);
             log.Info("  Logging Level: "+ LoggingLevel);
+
+            log.Info("DEVELOPER OPTIONS:-");
+            log.Info("  OverrideDeveloper: " + OverrideDeveloper);
+            log.Info("  Google Client ID: " + GoogleDeveloperClientID);
+            log.Info("  Google Client Secret: " + GoogleDeveloperClientSecret);
+            log.Info("  Enable Retry: " + EnableAutoRetry);
+            log.Info("  Auto Retry Delay (min): " + AutoRetryDelayMin);
 
             log.Info("ABOUT:-");
             log.Info("  Alpha Releases: " + alphaReleases);

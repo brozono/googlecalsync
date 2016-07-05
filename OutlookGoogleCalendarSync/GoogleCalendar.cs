@@ -58,6 +58,12 @@ namespace OutlookGoogleCalendarSync {
                 provider.ClientIdentifier = "653617509806-2nq341ol8ejgqhh2ku4j45m7q2bgdimv.apps.googleusercontent.com";
                 provider.ClientSecret = "tAi-gZLWtasS58i8CcCwVwsq";
             }
+
+            if (Settings.Instance.OverrideDeveloper) {
+                provider.ClientIdentifier = Settings.Instance.GoogleDeveloperClientID;
+                provider.ClientSecret = Settings.Instance.GoogleDeveloperClientSecret;
+            }
+            
             service = new CalendarService(new OAuth2Authenticator<NativeApplicationClient>(provider, getAuthentication));
         }
 
@@ -273,6 +279,11 @@ namespace OutlookGoogleCalendarSync {
                     if (!Settings.Instance.VerboseOutput) MainForm.Instance.Logboxout(OutlookCalendar.GetEventSummary(ai));
                     MainForm.Instance.Logboxout("WARNING: Event creation failed.\r\n" + ex.Message);
                     log.Error(ex.StackTrace);
+
+                    if (Settings.Instance.EnableAutoRetry) {
+                        continue;
+                    }
+
                     if (MessageBox.Show("Google event creation failed. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         continue;
                     else {
@@ -286,6 +297,11 @@ namespace OutlookGoogleCalendarSync {
                 } catch (System.Exception ex) {
                     MainForm.Instance.Logboxout("WARNING: New event failed to save.\r\n" + ex.Message);
                     log.Error(ex.StackTrace);
+
+                    if (Settings.Instance.EnableAutoRetry) {
+                        continue;
+                    }
+
                     if (MessageBox.Show("New Google event failed to save. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         continue;
                     else 
@@ -453,6 +469,11 @@ namespace OutlookGoogleCalendarSync {
                     if (!Settings.Instance.VerboseOutput) MainForm.Instance.Logboxout(OutlookCalendar.GetEventSummary(compare.Key));
                     MainForm.Instance.Logboxout("WARNING: Event update failed.\r\n" + ex.Message);
                     log.Error(ex.StackTrace);
+
+                    if (Settings.Instance.EnableAutoRetry) {
+                        continue;
+                    }
+
                     if (MessageBox.Show("Google event update failed. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         continue;
                     else
@@ -466,6 +487,11 @@ namespace OutlookGoogleCalendarSync {
                     } catch (System.Exception ex) {
                         MainForm.Instance.Logboxout("WARNING: Updated event failed to save.\r\n" + ex.Message);
                         log.Error(ex.StackTrace);
+
+                        if (Settings.Instance.EnableAutoRetry) {
+                            continue;
+                        }
+
                         if (MessageBox.Show("Updated Google event failed to save. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             continue;
                         else
@@ -490,6 +516,11 @@ namespace OutlookGoogleCalendarSync {
                     } catch (System.Exception ex) {
                         MainForm.Instance.Logboxout("WARNING: Updated event failed to save.\r\n" + ex.Message);
                         log.Error(ex.StackTrace);
+
+                        if (Settings.Instance.EnableAutoRetry) {
+                            continue;
+                        }
+
                         if (MessageBox.Show("Updated Google event failed to save. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                             continue;
                         else
@@ -771,6 +802,11 @@ namespace OutlookGoogleCalendarSync {
                 } catch (System.Exception ex) {
                     MainForm.Instance.Logboxout("WARNING: Deleted event failed to remove.\r\n" + ex.Message);
                     log.Error(ex.StackTrace);
+
+                    if (Settings.Instance.EnableAutoRetry) {
+                        continue;
+                    }
+
                     if (MessageBox.Show("Deleted Google event failed to remove. Continue with synchronisation?", "Sync item failed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         continue;
                     else {

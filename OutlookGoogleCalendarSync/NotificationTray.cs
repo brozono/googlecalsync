@@ -61,7 +61,7 @@ namespace OutlookGoogleCalendarSync {
             if (eventHandler != null) { item.Click += eventHandler; }
             switch (name) {
                 case "sync": item.Image = Properties.Resources.sync; break;
-                case "delaySync": item.Image = Properties.Resources.delay; break;
+                case "autoSync": item.Image = Properties.Resources.delay; break;
                 case "show": item.Image = Properties.Resources.cog; break;
                 case "exit": item.Image = Properties.Resources.exit; break;
             }
@@ -223,6 +223,5 @@ namespace OutlookGoogleCalendarSync {
                 );
             }
         }
-
     }
 }

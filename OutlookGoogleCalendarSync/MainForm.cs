@@ -209,6 +209,22 @@ namespace OutlookGoogleCalendarSync {
             }
             #endregion
             #region Sync Options box
+            #region What
+            this.gbSyncOptions_What.SuspendLayout();
+            cbAddDescription.Checked = Settings.Instance.AddDescription;
+            cbAddDescription_OnlyToGoogle.Checked = Settings.Instance.AddDescription_OnlyToGoogle;
+            cbAddAttendees.Checked = Settings.Instance.AddAttendees;
+            cbAddReminders.Checked = Settings.Instance.AddReminders;
+            cbUseGoogleDefaultReminder.Checked = Settings.Instance.UseGoogleDefaultReminder;
+            cbUseGoogleDefaultReminder.Enabled = Settings.Instance.AddReminders;
+            cbReminderDND.Enabled = Settings.Instance.AddReminders;
+            cbReminderDND.Checked = Settings.Instance.ReminderDND;
+            dtDNDstart.Enabled = Settings.Instance.AddReminders;
+            dtDNDend.Enabled = Settings.Instance.AddReminders;
+            dtDNDstart.Value = Settings.Instance.ReminderDNDstart;
+            dtDNDend.Value = Settings.Instance.ReminderDNDend;
+            this.gbSyncOptions_What.ResumeLayout();
+            #endregion
             #region How
             this.gbSyncOptions_How.Height = Convert.ToInt16(109 * magnification);
             syncDirection.Items.Add(SyncDirection.OutlookToGoogle);
@@ -256,23 +272,6 @@ namespace OutlookGoogleCalendarSync {
             cbIntervalUnit.SelectedIndexChanged += new System.EventHandler(this.cbIntervalUnit_SelectedIndexChanged);
             cbOutlookPush.Checked = Settings.Instance.OutlookPush;
             this.gbSyncOptions_When.ResumeLayout();
-            #endregion
-            #region What
-            this.gbSyncOptions_What.SuspendLayout();
-            cbAddDescription.Checked = Settings.Instance.AddDescription;
-            cbAddDescription_OnlyToGoogle.Checked = Settings.Instance.AddDescription_OnlyToGoogle;
-            cbAddAttendees.Checked = Settings.Instance.AddAttendees;
-            cbAddReminders.Checked = Settings.Instance.AddReminders;
-            cbUseGoogleDefaultReminder.Checked = Settings.Instance.UseGoogleDefaultReminder;
-            cbUseGoogleDefaultReminder.Enabled = Settings.Instance.AddReminders;
-            cbReminderDND.Enabled = Settings.Instance.AddReminders;
-            cbReminderDND.Checked = Settings.Instance.ReminderDND;
-            dtDNDstart.Enabled = Settings.Instance.AddReminders;
-            dtDNDend.Enabled = Settings.Instance.AddReminders;
-            dtDNDstart.Value = Settings.Instance.ReminderDNDstart;
-            dtDNDend.Value = Settings.Instance.ReminderDNDend;
-
-            this.gbSyncOptions_What.ResumeLayout();
             #endregion
             #endregion
             #region Application behaviour

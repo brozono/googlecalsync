@@ -171,7 +171,7 @@ namespace OutlookGoogleCalendarSync {
             return filtered;
         }
 
-        public List<AppointmentItem> FilterCalendarEntries(Items OutlookItems, Boolean includeRecurrences = false) {
+        public List<AppointmentItem> FilterCalendarEntries(Items OutlookItems, Boolean filterCategories = true, Boolean includeRecurrences = false) {
             //Filtering info @ https://msdn.microsoft.com/en-us/library/cc513841%28v=office.12%29.aspx
 
             List<AppointmentItem> result = new List<AppointmentItem>();
@@ -205,7 +205,23 @@ namespace OutlookGoogleCalendarSync {
                         } 
                         continue;
                     }
-                    result.Add(ai);
+                    if (filterCategories) {
+                        if (Settings.Instance.CategoriesRestrictBy == Settings.RestrictBy.Include) {
+                            if (Settings.Instance.Categories.Count() > 0 && ai.Categories != null && 
+                                ai.Categories.Split(new[] { ", " }, StringSplitOptions.None).Intersect(Settings.Instance.Categories).Count() > 0) 
+                            {
+                                result.Add(ai);
+                            }
+                        } else if (Settings.Instance.CategoriesRestrictBy == Settings.RestrictBy.Exclude) {
+                            if (Settings.Instance.Categories.Count() == 0 || ai.Categories == null ||
+                                ai.Categories.Split(new[] { ", " }, StringSplitOptions.None).Intersect(Settings.Instance.Categories).Count() == 0) 
+                            {
+                                result.Add(ai);
+                            }
+                        }
+                    } else {
+                        result.Add(ai);
+                    }
                 }
             }
 
@@ -421,7 +437,7 @@ namespace OutlookGoogleCalendarSync {
             }
 
             RecurrencePattern oPattern = (ai.RecurrenceState == OlRecurrenceState.olApptMaster) ? ai.GetRecurrencePattern() : null;
-            Recurrence.Instance.CompareOutlookPattern(ev, ai, sb, ref itemModified);
+            Recurrence.Instance.CompareOutlookPattern(ev, ai, SyncDirection.GoogleToOutlook, sb, ref itemModified);
 
             DateTime evParsedDate = DateTime.Parse(ev.Start.Date ?? ev.Start.DateTime);
             if (MainForm.CompareAttribute("Start time", SyncDirection.GoogleToOutlook,
@@ -725,7 +741,7 @@ namespace OutlookGoogleCalendarSync {
                 //ReadOnly: ea.ResponseStatus
             }
         }
-        
+
         #region STATIC functions
         public static Microsoft.Office.Interop.Outlook.Application AttachToOutlook() {
             Microsoft.Office.Interop.Outlook.Application oApp;

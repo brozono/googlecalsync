@@ -331,7 +331,7 @@ namespace OutlookGoogleCalendarSync {
             Event ev = new Event(); 
             //Add the Outlook appointment ID into Google event
             AddOutlookID(ref ev, ai);
-                
+
             ev.Start = new EventDateTime();
             ev.End = new EventDateTime();
 
@@ -1228,11 +1228,18 @@ namespace OutlookGoogleCalendarSync {
                     throw new System.ApplicationException(noAuth);
                 }
             } else {
-                arg.RefreshToken(state, null);
-                if (string.IsNullOrEmpty(state.AccessToken))
-                    log.Error("Failed to retrieve Access token.");
-                else
-                    log.Debug("Access token refreshed - expires " + ((DateTime)state.AccessTokenExpirationUtc).ToLocalTime().ToString());
+                try {
+                    arg.RefreshToken(state, null);
+                    if (string.IsNullOrEmpty(state.AccessToken))
+                        log.Error("Failed to retrieve Access token.");
+                    else
+                        log.Debug("Access token refreshed - expires " + ((DateTime)state.AccessTokenExpirationUtc).ToLocalTime().ToString());
+                } catch (System.Exception ex) {
+                    log.Error(ex.GetType().ToString() + " " + ex.Message);
+                    log.Error(ex.StackTrace);
+                    MainForm.Instance.Logboxout("Failed to obtain Calendar access from Google - it's possible your access has been revoked."
+                        + "\r\nTry disconnecting your Google account and reauthenticating.");
+                }
                 result = state;
                 getGaccountEmail(result.AccessToken, false);
             }
@@ -1431,7 +1438,7 @@ namespace OutlookGoogleCalendarSync {
             } else if (ex.Message.Contains("Rate Limit Exceeded")) {
                 return apiException.backoffThenRetry;
 
-            } else if (ex.Message.Contains("Daily Limit Exceeded [403]")) {
+            } else if (ex.Message.Contains("Daily Limit Exceeded")) {
                 log.Warn(ex.Message);
                 log.Warn("Google's free Calendar quota has been exhausted! New quota comes into effect 08:00 GMT");
                 MainForm.Instance.syncNote(MainForm.SyncNotes.QuotaExhaustedInfo, null);

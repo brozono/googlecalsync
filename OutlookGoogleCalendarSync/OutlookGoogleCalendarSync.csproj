@@ -40,7 +40,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>2.2.3.1</ApplicationVersion>
+    <ApplicationVersion>2.2.4.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -71,7 +71,7 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>49A0A7A1E96E207B4145CB376D0CB7DE1B54E7EC</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>AE9DC9BFF402115E362DA7B8152904D7FF3DDF14</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>OutlookGoogleCalendarSync_TemporaryKey.pfx</ManifestKeyFile>
@@ -225,9 +225,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="OutlookGoogleCalendarSync_TemporaryKey.pfx" />
     <None Include="Resources\delay.png" />
     <None Include="OGCS_10years.pfx" />
-    <None Include="OutlookGoogleCalendarSync_TemporaryKey.pfx" />
     <None Include="Resources\sync.gif" />
     <None Include="Resources\cog.png" />
     <None Include="Resources\exit.gif" />

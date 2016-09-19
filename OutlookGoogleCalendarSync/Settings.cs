@@ -202,8 +202,10 @@ namespace OutlookGoogleCalendarSync {
         [DataMember] public string Version {
             get { return version; }
             set {
+                if (version != null && version != value) {
+                    XMLManager.ExportElement("Version", value, Program.SettingsFile);
+                }
                 version = value;
-                if (!loading()) XMLManager.ExportElement("Version", value, Program.SettingsFile);
             }
         }
         [DataMember] public bool AlphaReleases {
@@ -244,7 +246,7 @@ namespace OutlookGoogleCalendarSync {
         private Boolean loading() {
             StackTrace stackTrace = new StackTrace();
             foreach (StackFrame frame in stackTrace.GetFrames().Reverse()) {
-                if (frame.GetMethod().Name == "Load") {
+                if (new String[] {"Load","isNewVersion"}.Contains(frame.GetMethod().Name)) {
                     return true;
                 }
             }

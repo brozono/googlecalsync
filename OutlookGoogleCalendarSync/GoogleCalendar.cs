@@ -656,8 +656,8 @@ namespace OutlookGoogleCalendarSync {
                 ev.Location = ai.Location;
 
             String oPrivacy = (ai.Sensitivity == OlSensitivity.olNormal) ? "default" : "private";
-            String gPrivacy = ev.Visibility ?? "default";
-            if (MainForm.CompareAttribute("Private", SyncDirection.OutlookToGoogle, gPrivacy, oPrivacy, sb, ref itemModified)) {
+            String gPrivacy = (ev.Visibility == null || ev.Visibility == "public") ? "default" : ev.Visibility;
+            if (MainForm.CompareAttribute("Privacy", SyncDirection.OutlookToGoogle, gPrivacy, oPrivacy, sb, ref itemModified)) {
                 ev.Visibility = oPrivacy;
             }
             String oFreeBusy = (ai.BusyStatus == OlBusyStatus.olFree) ? "transparent" : "opaque";
@@ -1242,8 +1242,12 @@ namespace OutlookGoogleCalendarSync {
                 } catch (System.Exception ex) {
                     log.Error(ex.GetType().ToString() + " " + ex.Message);
                     log.Error(ex.StackTrace);
-                    MainForm.Instance.Logboxout("Failed to obtain Calendar access from Google - it's possible your access has been revoked."
-                        + "\r\nTry disconnecting your Google account and reauthenticating.");
+                    if (ex.Message.ToLower().Contains("access denied")) {
+                        MainForm.Instance.Logboxout("Failed to obtain Calendar access from Google - it's possible your access has been revoked."
+                           + "\r\nTry disconnecting your Google account and reauthenticating.");
+                    } else {
+                        throw ex;
+                    }
                 }
                 result = state;
                 getGaccountEmail(result.AccessToken, false);
@@ -1304,6 +1308,7 @@ namespace OutlookGoogleCalendarSync {
                 try { log.Warn("  ev.Start: " + (ev.Start == null ? "null!" : ev.Start.Date ?? ev.Start.DateTime)); } catch { }
                 try { log.Warn("  ev.End: " + (ev.End == null ? "null!" : ev.End.Date ?? ev.End.DateTime)); } catch { }
                 try { log.Warn("  ev.Status: " + ev.Status ?? "null!"); } catch { }
+                try { log.Warn("  ev.RecurringEventId: " + ev.RecurringEventId ?? "null"); } catch { }
                 return "";
             }
             return signature.Trim();
@@ -1345,8 +1350,8 @@ namespace OutlookGoogleCalendarSync {
         private static String exportToCSV(Event ev) {
             System.Text.StringBuilder csv = new System.Text.StringBuilder();
 
-            csv.Append(ev.Start.Date ?? ev.Start.DateTime + ",");
-            csv.Append(ev.End.Date ?? ev.End.DateTime + ",");
+            csv.Append((ev.Start == null ? "null" : (ev.Start.Date ?? ev.Start.DateTime)) + ",");
+            csv.Append((ev.End == null ? "null" : (ev.End.Date ?? ev.End.DateTime)) + ",");
             csv.Append("\"" + ev.Summary + "\",");
             
             if (ev.Location == null) csv.Append(",");
@@ -1395,14 +1400,24 @@ namespace OutlookGoogleCalendarSync {
 
         public static string GetEventSummary(Event ev) {
             String eventSummary = "";
-            if (ev.Start.DateTime != null) {
-                DateTime gDate = DateTime.Parse(ev.Start.DateTime);
-                eventSummary += gDate.ToShortDateString() + " " + gDate.ToShortTimeString();
-            } else
-                eventSummary += DateTime.Parse(ev.Start.Date).ToShortDateString();
-            if ((ev.Recurrence != null && ev.RecurringEventId == null) || ev.RecurringEventId != null)
-                eventSummary += " (R)";
-            eventSummary += " => \"" + ev.Summary + "\"";
+            try {
+                if (ev.Start.DateTime != null) {
+                    DateTime gDate = DateTime.Parse(ev.Start.DateTime);
+                    eventSummary += gDate.ToShortDateString() + " " + gDate.ToShortTimeString();
+                } else
+                    eventSummary += DateTime.Parse(ev.Start.Date).ToShortDateString();
+                if ((ev.Recurrence != null && ev.RecurringEventId == null) || ev.RecurringEventId != null)
+                    eventSummary += " (R)";
+                eventSummary += " => \"" + ev.Summary + "\"";
+            } catch {
+                log.Warn("Failed to create Event summary: " + eventSummary);
+                log.Warn("This Event cannot be synced.");
+                try { log.Warn("  ev.Summary: " + ev.Summary); } catch { }
+                try { log.Warn("  ev.Start: " + (ev.Start == null ? "null!" : ev.Start.Date ?? ev.Start.DateTime)); } catch { }
+                try { log.Warn("  ev.End: " + (ev.End == null ? "null!" : ev.End.Date ?? ev.End.DateTime)); } catch { }
+                try { log.Warn("  ev.Status: " + ev.Status ?? "null!"); } catch { }
+                try { log.Warn("  ev.RecurringEventId: " + ev.RecurringEventId ?? "null"); } catch { }
+            } 
             return eventSummary;
         }
 

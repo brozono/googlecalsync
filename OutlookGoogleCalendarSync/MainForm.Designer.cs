@@ -48,6 +48,7 @@
             this.lSettingInfo = new System.Windows.Forms.Label();
             this.tabAppSettings = new System.Windows.Forms.TabControl();
             this.tabOutlook = new System.Windows.Forms.TabPage();
+            this.cbOutlookCalendars = new System.Windows.Forms.ComboBox();
             this.lFilterCategories = new System.Windows.Forms.Label();
             this.cbCategoryFilter = new System.Windows.Forms.ComboBox();
             this.clbCategories = new System.Windows.Forms.CheckedListBox();
@@ -65,7 +66,6 @@
             this.txtDateFormats = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.lOutlookCalendar = new System.Windows.Forms.Label();
-            this.cbOutlookCalendars = new System.Windows.Forms.ComboBox();
             this.rbOutlookDefaultMB = new System.Windows.Forms.RadioButton();
             this.rbOutlookEWS = new System.Windows.Forms.RadioButton();
             this.rbOutlookAltMB = new System.Windows.Forms.RadioButton();
@@ -78,6 +78,15 @@
             this.txtEWSUser = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabGoogle = new System.Windows.Forms.TabPage();
+            this.gbDeveloperOptions = new System.Windows.Forms.GroupBox();
+            this.llAPIConsole = new System.Windows.Forms.LinkLabel();
+            this.cbShowClientSecret = new System.Windows.Forms.CheckBox();
+            this.lGoogleAPIInstructions = new System.Windows.Forms.TextBox();
+            this.tbClientSecret = new System.Windows.Forms.TextBox();
+            this.tbClientID = new System.Windows.Forms.TextBox();
+            this.lClientID = new System.Windows.Forms.Label();
+            this.lSecret = new System.Windows.Forms.Label();
+            this.cbShowDeveloperOptions = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.btResetGCal = new System.Windows.Forms.Button();
@@ -86,6 +95,16 @@
             this.bGetGoogleCalendars = new System.Windows.Forms.Button();
             this.cbGoogleCalendars = new System.Windows.Forms.ComboBox();
             this.tabSyncOptions = new System.Windows.Forms.TabPage();
+            this.gbSyncOptions_When = new System.Windows.Forms.GroupBox();
+            this.cbOutlookPush = new System.Windows.Forms.CheckBox();
+            this.cbIntervalUnit = new System.Windows.Forms.ComboBox();
+            this.tbInterval = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tbDaysInTheFuture = new System.Windows.Forms.NumericUpDown();
+            this.tbDaysInThePast = new System.Windows.Forms.NumericUpDown();
+            this.lDaysInFuture = new System.Windows.Forms.Label();
+            this.lDaysInPast = new System.Windows.Forms.Label();
+            this.lDateRange = new System.Windows.Forms.Label();
             this.gbSyncOptions_How = new System.Windows.Forms.GroupBox();
             this.cbObfuscateDirection = new System.Windows.Forms.ComboBox();
             this.label31 = new System.Windows.Forms.Label();
@@ -99,16 +118,6 @@
             this.cbMergeItems = new System.Windows.Forms.CheckBox();
             this.cbDisableDeletion = new System.Windows.Forms.CheckBox();
             this.cbConfirmOnDelete = new System.Windows.Forms.CheckBox();
-            this.gbSyncOptions_When = new System.Windows.Forms.GroupBox();
-            this.cbOutlookPush = new System.Windows.Forms.CheckBox();
-            this.cbIntervalUnit = new System.Windows.Forms.ComboBox();
-            this.tbInterval = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tbDaysInTheFuture = new System.Windows.Forms.NumericUpDown();
-            this.tbDaysInThePast = new System.Windows.Forms.NumericUpDown();
-            this.lDaysInFuture = new System.Windows.Forms.Label();
-            this.lDaysInPast = new System.Windows.Forms.Label();
-            this.lDateRange = new System.Windows.Forms.Label();
             this.WhatPostit = new System.Windows.Forms.Panel();
             this.tbWhatHelp = new System.Windows.Forms.RichTextBox();
             this.gbSyncOptions_What = new System.Windows.Forms.GroupBox();
@@ -155,15 +164,6 @@
             this.lRetryDelay = new System.Windows.Forms.Label();
             this.tbAutoRetryDelay = new System.Windows.Forms.NumericUpDown();
             this.cbEnableAutoRetry = new System.Windows.Forms.CheckBox();
-            this.lDeveloperOptions = new System.Windows.Forms.Label();
-            this.gbGoogleDeveloperSettings = new System.Windows.Forms.GroupBox();
-            this.lGoogleConsolLink = new System.Windows.Forms.LinkLabel();
-            this.lGoogleDevInstructions = new System.Windows.Forms.Label();
-            this.txtGoogleDevClientSecret = new System.Windows.Forms.TextBox();
-            this.lClientSecret = new System.Windows.Forms.Label();
-            this.txtGoogleDevClientID = new System.Windows.Forms.TextBox();
-            this.lClientID = new System.Windows.Forms.Label();
-            this.cbGoogleDevOverride = new System.Windows.Forms.CheckBox();
             this.bSave = new System.Windows.Forms.Button();
             this.tabPage_Help = new System.Windows.Forms.TabPage();
             this.tbTS2 = new System.Windows.Forms.TextBox();
@@ -221,13 +221,14 @@
             this.groupBox1.SuspendLayout();
             this.gbEWS.SuspendLayout();
             this.tabGoogle.SuspendLayout();
+            this.gbDeveloperOptions.SuspendLayout();
             this.tabSyncOptions.SuspendLayout();
-            this.gbSyncOptions_How.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgObfuscateRegex)).BeginInit();
             this.gbSyncOptions_When.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDaysInTheFuture)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDaysInThePast)).BeginInit();
+            this.gbSyncOptions_How.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgObfuscateRegex)).BeginInit();
             this.WhatPostit.SuspendLayout();
             this.gbSyncOptions_What.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumberAttendees)).BeginInit();
@@ -236,7 +237,6 @@
             this.tabDevOptions.SuspendLayout();
             this.gbAutoRetryErrors.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAutoRetryDelay)).BeginInit();
-            this.gbGoogleDeveloperSettings.SuspendLayout();
             this.tabPage_Help.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPage_About.SuspendLayout();
@@ -434,13 +434,13 @@
             // tabOutlook
             // 
             this.tabOutlook.BackColor = System.Drawing.Color.White;
+            this.tabOutlook.Controls.Add(this.cbOutlookCalendars);
             this.tabOutlook.Controls.Add(this.lFilterCategories);
             this.tabOutlook.Controls.Add(this.cbCategoryFilter);
             this.tabOutlook.Controls.Add(this.clbCategories);
             this.tabOutlook.Controls.Add(this.groupBox1);
             this.tabOutlook.Controls.Add(this.label11);
             this.tabOutlook.Controls.Add(this.lOutlookCalendar);
-            this.tabOutlook.Controls.Add(this.cbOutlookCalendars);
             this.tabOutlook.Controls.Add(this.rbOutlookDefaultMB);
             this.tabOutlook.Controls.Add(this.rbOutlookEWS);
             this.tabOutlook.Controls.Add(this.rbOutlookAltMB);
@@ -453,10 +453,22 @@
             this.tabOutlook.TabIndex = 0;
             this.tabOutlook.Text = "  Outlook";
             // 
+            // cbOutlookCalendars
+            // 
+            this.cbOutlookCalendars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbOutlookCalendars.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbOutlookCalendars.FormattingEnabled = true;
+            this.cbOutlookCalendars.Location = new System.Drawing.Point(112, 199);
+            this.cbOutlookCalendars.Name = "cbOutlookCalendars";
+            this.cbOutlookCalendars.Size = new System.Drawing.Size(272, 21);
+            this.cbOutlookCalendars.TabIndex = 24;
+            this.cbOutlookCalendars.SelectedIndexChanged += new System.EventHandler(this.cbOutlookCalendar_SelectedIndexChanged);
+            // 
             // lFilterCategories
             // 
             this.lFilterCategories.AutoSize = true;
-            this.lFilterCategories.Location = new System.Drawing.Point(20, 229);
+            this.lFilterCategories.Location = new System.Drawing.Point(20, 230);
             this.lFilterCategories.Name = "lFilterCategories";
             this.lFilterCategories.Size = new System.Drawing.Size(81, 13);
             this.lFilterCategories.TabIndex = 44;
@@ -469,9 +481,9 @@
             this.cbCategoryFilter.Items.AddRange(new object[] {
             "Exclude",
             "Include"});
-            this.cbCategoryFilter.Location = new System.Drawing.Point(107, 226);
+            this.cbCategoryFilter.Location = new System.Drawing.Point(112, 226);
             this.cbCategoryFilter.Name = "cbCategoryFilter";
-            this.cbCategoryFilter.Size = new System.Drawing.Size(84, 21);
+            this.cbCategoryFilter.Size = new System.Drawing.Size(79, 21);
             this.cbCategoryFilter.TabIndex = 43;
             this.cbCategoryFilter.SelectedIndexChanged += new System.EventHandler(this.cbCategoryFilter_SelectedIndexChanged);
             // 
@@ -488,7 +500,7 @@
             "Category2",
             "Category3",
             "Category4"});
-            this.clbCategories.Location = new System.Drawing.Point(197, 227);
+            this.clbCategories.Location = new System.Drawing.Point(197, 226);
             this.clbCategories.Name = "clbCategories";
             this.clbCategories.Size = new System.Drawing.Size(187, 64);
             this.clbCategories.Sorted = true;
@@ -663,18 +675,6 @@
             this.lOutlookCalendar.TabIndex = 25;
             this.lOutlookCalendar.Text = "Select calendar";
             // 
-            // cbOutlookCalendars
-            // 
-            this.cbOutlookCalendars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbOutlookCalendars.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbOutlookCalendars.FormattingEnabled = true;
-            this.cbOutlookCalendars.Location = new System.Drawing.Point(107, 200);
-            this.cbOutlookCalendars.Name = "cbOutlookCalendars";
-            this.cbOutlookCalendars.Size = new System.Drawing.Size(277, 21);
-            this.cbOutlookCalendars.TabIndex = 24;
-            this.cbOutlookCalendars.SelectedIndexChanged += new System.EventHandler(this.cbOutlookCalendar_SelectedIndexChanged);
-            // 
             // rbOutlookDefaultMB
             // 
             this.rbOutlookDefaultMB.AutoSize = true;
@@ -717,9 +717,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddMailboxName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddMailboxName.FormattingEnabled = true;
-            this.ddMailboxName.Location = new System.Drawing.Point(134, 70);
+            this.ddMailboxName.Location = new System.Drawing.Point(134, 68);
             this.ddMailboxName.Name = "ddMailboxName";
             this.ddMailboxName.Size = new System.Drawing.Size(250, 21);
+            this.ddMailboxName.Sorted = true;
             this.ddMailboxName.TabIndex = 16;
             this.ddMailboxName.SelectedIndexChanged += new System.EventHandler(this.ddMailboxName_SelectedIndexChanged);
             // 
@@ -797,6 +798,8 @@
             // tabGoogle
             // 
             this.tabGoogle.BackColor = System.Drawing.Color.White;
+            this.tabGoogle.Controls.Add(this.gbDeveloperOptions);
+            this.tabGoogle.Controls.Add(this.cbShowDeveloperOptions);
             this.tabGoogle.Controls.Add(this.label13);
             this.tabGoogle.Controls.Add(this.label12);
             this.tabGoogle.Controls.Add(this.btResetGCal);
@@ -810,6 +813,124 @@
             this.tabGoogle.Size = new System.Drawing.Size(392, 462);
             this.tabGoogle.TabIndex = 1;
             this.tabGoogle.Text = "  Google";
+            // 
+            // gbDeveloperOptions
+            // 
+            this.gbDeveloperOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbDeveloperOptions.Controls.Add(this.llAPIConsole);
+            this.gbDeveloperOptions.Controls.Add(this.cbShowClientSecret);
+            this.gbDeveloperOptions.Controls.Add(this.lGoogleAPIInstructions);
+            this.gbDeveloperOptions.Controls.Add(this.tbClientSecret);
+            this.gbDeveloperOptions.Controls.Add(this.tbClientID);
+            this.gbDeveloperOptions.Controls.Add(this.lClientID);
+            this.gbDeveloperOptions.Controls.Add(this.lSecret);
+            this.gbDeveloperOptions.Location = new System.Drawing.Point(14, 208);
+            this.gbDeveloperOptions.Name = "gbDeveloperOptions";
+            this.gbDeveloperOptions.Size = new System.Drawing.Size(364, 151);
+            this.gbDeveloperOptions.TabIndex = 31;
+            this.gbDeveloperOptions.TabStop = false;
+            this.gbDeveloperOptions.Text = "Google OAuth API";
+            this.gbDeveloperOptions.Visible = false;
+            // 
+            // llAPIConsole
+            // 
+            this.llAPIConsole.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.llAPIConsole.AutoSize = true;
+            this.llAPIConsole.Location = new System.Drawing.Point(44, 64);
+            this.llAPIConsole.Name = "llAPIConsole";
+            this.llAPIConsole.Size = new System.Drawing.Size(273, 13);
+            this.llAPIConsole.TabIndex = 5;
+            this.llAPIConsole.TabStop = true;
+            this.llAPIConsole.Text = "https://console.developers.google.com/apis/credentials";
+            this.llAPIConsole.Visible = false;
+            this.llAPIConsole.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llAPIConsole_LinkClicked);
+            // 
+            // cbShowClientSecret
+            // 
+            this.cbShowClientSecret.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbShowClientSecret.AutoSize = true;
+            this.cbShowClientSecret.Enabled = false;
+            this.cbShowClientSecret.Location = new System.Drawing.Point(299, 120);
+            this.cbShowClientSecret.Name = "cbShowClientSecret";
+            this.cbShowClientSecret.Size = new System.Drawing.Size(53, 17);
+            this.cbShowClientSecret.TabIndex = 29;
+            this.cbShowClientSecret.Text = "Show";
+            this.cbShowClientSecret.UseVisualStyleBackColor = true;
+            this.cbShowClientSecret.Visible = false;
+            this.cbShowClientSecret.CheckedChanged += new System.EventHandler(this.cbShowClientSecret_CheckedChanged);
+            // 
+            // lGoogleAPIInstructions
+            // 
+            this.lGoogleAPIInstructions.BackColor = System.Drawing.SystemColors.Window;
+            this.lGoogleAPIInstructions.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lGoogleAPIInstructions.Location = new System.Drawing.Point(13, 20);
+            this.lGoogleAPIInstructions.Multiline = true;
+            this.lGoogleAPIInstructions.Name = "lGoogleAPIInstructions";
+            this.lGoogleAPIInstructions.ReadOnly = true;
+            this.lGoogleAPIInstructions.Size = new System.Drawing.Size(339, 43);
+            this.lGoogleAPIInstructions.TabIndex = 4;
+            this.lGoogleAPIInstructions.Text = "To change the Client ID and secret, first disconnect your account\r\nby clicking \"D" +
+    "isconnect Account\" above. \r\nObtain new values from the Google Developer Console:" +
+    "";
+            this.lGoogleAPIInstructions.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.lGoogleAPIInstructions.Visible = false;
+            // 
+            // tbClientSecret
+            // 
+            this.tbClientSecret.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbClientSecret.Location = new System.Drawing.Point(63, 117);
+            this.tbClientSecret.Name = "tbClientSecret";
+            this.tbClientSecret.ReadOnly = true;
+            this.tbClientSecret.Size = new System.Drawing.Size(230, 20);
+            this.tbClientSecret.TabIndex = 3;
+            this.tbClientSecret.UseSystemPasswordChar = true;
+            this.tbClientSecret.Visible = false;
+            this.tbClientSecret.TextChanged += new System.EventHandler(this.tbClientSecret_TextChanged);
+            // 
+            // tbClientID
+            // 
+            this.tbClientID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbClientID.Location = new System.Drawing.Point(63, 91);
+            this.tbClientID.Name = "tbClientID";
+            this.tbClientID.ReadOnly = true;
+            this.tbClientID.Size = new System.Drawing.Size(289, 20);
+            this.tbClientID.TabIndex = 2;
+            this.tbClientID.Visible = false;
+            this.tbClientID.TextChanged += new System.EventHandler(this.tbClientID_TextChanged);
+            // 
+            // lClientID
+            // 
+            this.lClientID.AutoSize = true;
+            this.lClientID.Location = new System.Drawing.Point(10, 94);
+            this.lClientID.Name = "lClientID";
+            this.lClientID.Size = new System.Drawing.Size(47, 13);
+            this.lClientID.TabIndex = 0;
+            this.lClientID.Text = "Client ID";
+            this.lClientID.Visible = false;
+            // 
+            // lSecret
+            // 
+            this.lSecret.AutoSize = true;
+            this.lSecret.Location = new System.Drawing.Point(10, 120);
+            this.lSecret.Name = "lSecret";
+            this.lSecret.Size = new System.Drawing.Size(38, 13);
+            this.lSecret.TabIndex = 1;
+            this.lSecret.Text = "Secret";
+            this.lSecret.Visible = false;
+            // 
+            // cbShowDeveloperOptions
+            // 
+            this.cbShowDeveloperOptions.AutoSize = true;
+            this.cbShowDeveloperOptions.Location = new System.Drawing.Point(14, 185);
+            this.cbShowDeveloperOptions.Name = "cbShowDeveloperOptions";
+            this.cbShowDeveloperOptions.Size = new System.Drawing.Size(193, 17);
+            this.cbShowDeveloperOptions.TabIndex = 30;
+            this.cbShowDeveloperOptions.Text = "Show advanced/developer options";
+            this.cbShowDeveloperOptions.UseVisualStyleBackColor = true;
+            this.cbShowDeveloperOptions.CheckedChanged += new System.EventHandler(this.cbShowDeveloperOptions_CheckedChanged);
             // 
             // label13
             // 
@@ -893,8 +1014,8 @@
             // tabSyncOptions
             // 
             this.tabSyncOptions.BackColor = System.Drawing.Color.White;
-            this.tabSyncOptions.Controls.Add(this.gbSyncOptions_How);
             this.tabSyncOptions.Controls.Add(this.gbSyncOptions_When);
+            this.tabSyncOptions.Controls.Add(this.gbSyncOptions_How);
             this.tabSyncOptions.Controls.Add(this.WhatPostit);
             this.tabSyncOptions.Controls.Add(this.gbSyncOptions_What);
             this.tabSyncOptions.Controls.Add(this.label15);
@@ -903,6 +1024,161 @@
             this.tabSyncOptions.Size = new System.Drawing.Size(392, 462);
             this.tabSyncOptions.TabIndex = 2;
             this.tabSyncOptions.Text = "  Sync Options";
+            // 
+            // gbSyncOptions_When
+            // 
+            this.gbSyncOptions_When.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbSyncOptions_When.Controls.Add(this.cbOutlookPush);
+            this.gbSyncOptions_When.Controls.Add(this.cbIntervalUnit);
+            this.gbSyncOptions_When.Controls.Add(this.tbInterval);
+            this.gbSyncOptions_When.Controls.Add(this.label1);
+            this.gbSyncOptions_When.Controls.Add(this.tbDaysInTheFuture);
+            this.gbSyncOptions_When.Controls.Add(this.tbDaysInThePast);
+            this.gbSyncOptions_When.Controls.Add(this.lDaysInFuture);
+            this.gbSyncOptions_When.Controls.Add(this.lDaysInPast);
+            this.gbSyncOptions_When.Controls.Add(this.lDateRange);
+            this.gbSyncOptions_When.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbSyncOptions_When.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.gbSyncOptions_When.Location = new System.Drawing.Point(12, 151);
+            this.gbSyncOptions_When.Name = "gbSyncOptions_When";
+            this.gbSyncOptions_When.Size = new System.Drawing.Size(369, 116);
+            this.gbSyncOptions_When.TabIndex = 41;
+            this.gbSyncOptions_When.TabStop = false;
+            this.gbSyncOptions_When.Text = "When";
+            // 
+            // cbOutlookPush
+            // 
+            this.cbOutlookPush.AutoSize = true;
+            this.cbOutlookPush.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbOutlookPush.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cbOutlookPush.Location = new System.Drawing.Point(42, 92);
+            this.cbOutlookPush.Name = "cbOutlookPush";
+            this.cbOutlookPush.Size = new System.Drawing.Size(191, 17);
+            this.cbOutlookPush.TabIndex = 42;
+            this.cbOutlookPush.Text = "Push Outlook changes immediately";
+            this.cbOutlookPush.UseVisualStyleBackColor = true;
+            this.cbOutlookPush.CheckedChanged += new System.EventHandler(this.cbOutlookPush_CheckedChanged);
+            // 
+            // cbIntervalUnit
+            // 
+            this.cbIntervalUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbIntervalUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbIntervalUnit.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cbIntervalUnit.FormattingEnabled = true;
+            this.cbIntervalUnit.Items.AddRange(new object[] {
+            "Minutes",
+            "Hours"});
+            this.cbIntervalUnit.Location = new System.Drawing.Point(118, 65);
+            this.cbIntervalUnit.Name = "cbIntervalUnit";
+            this.cbIntervalUnit.Size = new System.Drawing.Size(84, 21);
+            this.cbIntervalUnit.TabIndex = 41;
+            this.cbIntervalUnit.SelectedIndexChanged += new System.EventHandler(this.cbIntervalUnit_SelectedIndexChanged);
+            // 
+            // tbInterval
+            // 
+            this.tbInterval.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbInterval.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbInterval.Location = new System.Drawing.Point(74, 66);
+            this.tbInterval.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+            this.tbInterval.Name = "tbInterval";
+            this.tbInterval.Size = new System.Drawing.Size(40, 20);
+            this.tbInterval.TabIndex = 40;
+            this.tbInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbInterval.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbInterval.ValueChanged += new System.EventHandler(this.tbMinuteOffsets_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label1.Location = new System.Drawing.Point(10, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(66, 14);
+            this.label1.TabIndex = 39;
+            this.label1.Text = "Interval:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // tbDaysInTheFuture
+            // 
+            this.tbDaysInTheFuture.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbDaysInTheFuture.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbDaysInTheFuture.Location = new System.Drawing.Point(74, 42);
+            this.tbDaysInTheFuture.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
+            this.tbDaysInTheFuture.Name = "tbDaysInTheFuture";
+            this.tbDaysInTheFuture.Size = new System.Drawing.Size(45, 20);
+            this.tbDaysInTheFuture.TabIndex = 38;
+            this.tbDaysInTheFuture.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbDaysInTheFuture.Value = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            this.tbDaysInTheFuture.ValueChanged += new System.EventHandler(this.tbDaysInTheFuture_ValueChanged);
+            // 
+            // tbDaysInThePast
+            // 
+            this.tbDaysInThePast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbDaysInThePast.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tbDaysInThePast.Location = new System.Drawing.Point(74, 18);
+            this.tbDaysInThePast.Maximum = new decimal(new int[] {
+            365,
+            0,
+            0,
+            0});
+            this.tbDaysInThePast.Name = "tbDaysInThePast";
+            this.tbDaysInThePast.Size = new System.Drawing.Size(45, 20);
+            this.tbDaysInThePast.TabIndex = 36;
+            this.tbDaysInThePast.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbDaysInThePast.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.tbDaysInThePast.ValueChanged += new System.EventHandler(this.tbDaysInThePast_ValueChanged);
+            // 
+            // lDaysInFuture
+            // 
+            this.lDaysInFuture.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lDaysInFuture.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lDaysInFuture.Location = new System.Drawing.Point(120, 44);
+            this.lDaysInFuture.Name = "lDaysInFuture";
+            this.lDaysInFuture.Size = new System.Drawing.Size(104, 20);
+            this.lDaysInFuture.TabIndex = 34;
+            this.lDaysInFuture.Text = "days in the future";
+            // 
+            // lDaysInPast
+            // 
+            this.lDaysInPast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lDaysInPast.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lDaysInPast.Location = new System.Drawing.Point(120, 21);
+            this.lDaysInPast.Name = "lDaysInPast";
+            this.lDaysInPast.Size = new System.Drawing.Size(87, 18);
+            this.lDaysInPast.TabIndex = 35;
+            this.lDaysInPast.Text = "days in the past";
+            // 
+            // lDateRange
+            // 
+            this.lDateRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lDateRange.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lDateRange.Location = new System.Drawing.Point(10, 21);
+            this.lDateRange.Name = "lDateRange";
+            this.lDateRange.Size = new System.Drawing.Size(66, 14);
+            this.lDateRange.TabIndex = 37;
+            this.lDateRange.Text = "Date range:";
+            this.lDateRange.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // gbSyncOptions_How
             // 
@@ -1069,161 +1345,6 @@
             this.cbConfirmOnDelete.Text = "Confirm deletions";
             this.cbConfirmOnDelete.UseVisualStyleBackColor = true;
             this.cbConfirmOnDelete.CheckedChanged += new System.EventHandler(this.cbConfirmOnDelete_CheckedChanged);
-            // 
-            // gbSyncOptions_When
-            // 
-            this.gbSyncOptions_When.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbSyncOptions_When.Controls.Add(this.cbOutlookPush);
-            this.gbSyncOptions_When.Controls.Add(this.cbIntervalUnit);
-            this.gbSyncOptions_When.Controls.Add(this.tbInterval);
-            this.gbSyncOptions_When.Controls.Add(this.label1);
-            this.gbSyncOptions_When.Controls.Add(this.tbDaysInTheFuture);
-            this.gbSyncOptions_When.Controls.Add(this.tbDaysInThePast);
-            this.gbSyncOptions_When.Controls.Add(this.lDaysInFuture);
-            this.gbSyncOptions_When.Controls.Add(this.lDaysInPast);
-            this.gbSyncOptions_When.Controls.Add(this.lDateRange);
-            this.gbSyncOptions_When.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbSyncOptions_When.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.gbSyncOptions_When.Location = new System.Drawing.Point(12, 151);
-            this.gbSyncOptions_When.Name = "gbSyncOptions_When";
-            this.gbSyncOptions_When.Size = new System.Drawing.Size(369, 116);
-            this.gbSyncOptions_When.TabIndex = 41;
-            this.gbSyncOptions_When.TabStop = false;
-            this.gbSyncOptions_When.Text = "When";
-            // 
-            // cbOutlookPush
-            // 
-            this.cbOutlookPush.AutoSize = true;
-            this.cbOutlookPush.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbOutlookPush.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.cbOutlookPush.Location = new System.Drawing.Point(42, 92);
-            this.cbOutlookPush.Name = "cbOutlookPush";
-            this.cbOutlookPush.Size = new System.Drawing.Size(191, 17);
-            this.cbOutlookPush.TabIndex = 42;
-            this.cbOutlookPush.Text = "Push Outlook changes immediately";
-            this.cbOutlookPush.UseVisualStyleBackColor = true;
-            this.cbOutlookPush.CheckedChanged += new System.EventHandler(this.cbOutlookPush_CheckedChanged);
-            // 
-            // cbIntervalUnit
-            // 
-            this.cbIntervalUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbIntervalUnit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbIntervalUnit.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.cbIntervalUnit.FormattingEnabled = true;
-            this.cbIntervalUnit.Items.AddRange(new object[] {
-            "Minutes",
-            "Hours"});
-            this.cbIntervalUnit.Location = new System.Drawing.Point(118, 65);
-            this.cbIntervalUnit.Name = "cbIntervalUnit";
-            this.cbIntervalUnit.Size = new System.Drawing.Size(84, 21);
-            this.cbIntervalUnit.TabIndex = 41;
-            this.cbIntervalUnit.SelectedIndexChanged += new System.EventHandler(this.cbIntervalUnit_SelectedIndexChanged);
-            // 
-            // tbInterval
-            // 
-            this.tbInterval.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbInterval.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbInterval.Location = new System.Drawing.Point(74, 66);
-            this.tbInterval.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-            this.tbInterval.Name = "tbInterval";
-            this.tbInterval.Size = new System.Drawing.Size(40, 20);
-            this.tbInterval.TabIndex = 40;
-            this.tbInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.tbInterval.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.tbInterval.ValueChanged += new System.EventHandler(this.tbMinuteOffsets_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(10, 68);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(66, 14);
-            this.label1.TabIndex = 39;
-            this.label1.Text = "Interval:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // tbDaysInTheFuture
-            // 
-            this.tbDaysInTheFuture.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbDaysInTheFuture.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbDaysInTheFuture.Location = new System.Drawing.Point(74, 42);
-            this.tbDaysInTheFuture.Maximum = new decimal(new int[] {
-            365,
-            0,
-            0,
-            0});
-            this.tbDaysInTheFuture.Name = "tbDaysInTheFuture";
-            this.tbDaysInTheFuture.Size = new System.Drawing.Size(40, 20);
-            this.tbDaysInTheFuture.TabIndex = 38;
-            this.tbDaysInTheFuture.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.tbDaysInTheFuture.Value = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            this.tbDaysInTheFuture.ValueChanged += new System.EventHandler(this.tbDaysInTheFuture_ValueChanged);
-            // 
-            // tbDaysInThePast
-            // 
-            this.tbDaysInThePast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbDaysInThePast.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tbDaysInThePast.Location = new System.Drawing.Point(74, 18);
-            this.tbDaysInThePast.Maximum = new decimal(new int[] {
-            365,
-            0,
-            0,
-            0});
-            this.tbDaysInThePast.Name = "tbDaysInThePast";
-            this.tbDaysInThePast.Size = new System.Drawing.Size(40, 20);
-            this.tbDaysInThePast.TabIndex = 36;
-            this.tbDaysInThePast.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.tbDaysInThePast.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.tbDaysInThePast.ValueChanged += new System.EventHandler(this.tbDaysInThePast_ValueChanged);
-            // 
-            // lDaysInFuture
-            // 
-            this.lDaysInFuture.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lDaysInFuture.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lDaysInFuture.Location = new System.Drawing.Point(115, 44);
-            this.lDaysInFuture.Name = "lDaysInFuture";
-            this.lDaysInFuture.Size = new System.Drawing.Size(104, 20);
-            this.lDaysInFuture.TabIndex = 34;
-            this.lDaysInFuture.Text = "days in the future";
-            // 
-            // lDaysInPast
-            // 
-            this.lDaysInPast.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lDaysInPast.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lDaysInPast.Location = new System.Drawing.Point(115, 21);
-            this.lDaysInPast.Name = "lDaysInPast";
-            this.lDaysInPast.Size = new System.Drawing.Size(87, 18);
-            this.lDaysInPast.TabIndex = 35;
-            this.lDaysInPast.Text = "days in the past";
-            // 
-            // lDateRange
-            // 
-            this.lDateRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lDateRange.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lDateRange.Location = new System.Drawing.Point(10, 21);
-            this.lDateRange.Name = "lDateRange";
-            this.lDateRange.Size = new System.Drawing.Size(66, 14);
-            this.lDateRange.TabIndex = 37;
-            this.lDateRange.Text = "Date range:";
-            this.lDateRange.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // WhatPostit
             // 
@@ -1769,8 +1890,6 @@
             // 
             this.tabDevOptions.BackColor = System.Drawing.Color.White;
             this.tabDevOptions.Controls.Add(this.gbAutoRetryErrors);
-            this.tabDevOptions.Controls.Add(this.lDeveloperOptions);
-            this.tabDevOptions.Controls.Add(this.gbGoogleDeveloperSettings);
             this.tabDevOptions.Location = new System.Drawing.Point(79, 4);
             this.tabDevOptions.Name = "tabDevOptions";
             this.tabDevOptions.Padding = new System.Windows.Forms.Padding(3);
@@ -1785,7 +1904,7 @@
             this.gbAutoRetryErrors.Controls.Add(this.cbEnableAutoRetry);
             this.gbAutoRetryErrors.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbAutoRetryErrors.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.gbAutoRetryErrors.Location = new System.Drawing.Point(12, 230);
+            this.gbAutoRetryErrors.Location = new System.Drawing.Point(12, 11);
             this.gbAutoRetryErrors.Name = "gbAutoRetryErrors";
             this.gbAutoRetryErrors.Size = new System.Drawing.Size(369, 83);
             this.gbAutoRetryErrors.TabIndex = 2;
@@ -1839,112 +1958,6 @@
             this.cbEnableAutoRetry.Text = "Enable Auto Retry";
             this.cbEnableAutoRetry.UseVisualStyleBackColor = true;
             this.cbEnableAutoRetry.CheckedChanged += new System.EventHandler(this.cbEnableAutoRetry_CheckedChanged);
-            // 
-            // lDeveloperOptions
-            // 
-            this.lDeveloperOptions.AutoSize = true;
-            this.lDeveloperOptions.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lDeveloperOptions.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lDeveloperOptions.Location = new System.Drawing.Point(139, 12);
-            this.lDeveloperOptions.Name = "lDeveloperOptions";
-            this.lDeveloperOptions.Size = new System.Drawing.Size(117, 15);
-            this.lDeveloperOptions.TabIndex = 1;
-            this.lDeveloperOptions.Text = "Developer Options";
-            this.lDeveloperOptions.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // gbGoogleDeveloperSettings
-            // 
-            this.gbGoogleDeveloperSettings.Controls.Add(this.lGoogleConsolLink);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.lGoogleDevInstructions);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.txtGoogleDevClientSecret);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.lClientSecret);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.txtGoogleDevClientID);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.lClientID);
-            this.gbGoogleDeveloperSettings.Controls.Add(this.cbGoogleDevOverride);
-            this.gbGoogleDeveloperSettings.Font = new System.Drawing.Font("Arial Black", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbGoogleDeveloperSettings.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.gbGoogleDeveloperSettings.Location = new System.Drawing.Point(12, 41);
-            this.gbGoogleDeveloperSettings.Name = "gbGoogleDeveloperSettings";
-            this.gbGoogleDeveloperSettings.Size = new System.Drawing.Size(369, 177);
-            this.gbGoogleDeveloperSettings.TabIndex = 0;
-            this.gbGoogleDeveloperSettings.TabStop = false;
-            this.gbGoogleDeveloperSettings.Text = "Google Developer Setting";
-            // 
-            // lGoogleConsolLink
-            // 
-            this.lGoogleConsolLink.AutoSize = true;
-            this.lGoogleConsolLink.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lGoogleConsolLink.Location = new System.Drawing.Point(35, 150);
-            this.lGoogleConsolLink.Name = "lGoogleConsolLink";
-            this.lGoogleConsolLink.Size = new System.Drawing.Size(273, 13);
-            this.lGoogleConsolLink.TabIndex = 6;
-            this.lGoogleConsolLink.TabStop = true;
-            this.lGoogleConsolLink.Text = "https://console.developers.google.com/apis/credentials";
-            this.lGoogleConsolLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lGoogleConsolLink_LinkClicked);
-            // 
-            // lGoogleDevInstructions
-            // 
-            this.lGoogleDevInstructions.AutoSize = true;
-            this.lGoogleDevInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lGoogleDevInstructions.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lGoogleDevInstructions.Location = new System.Drawing.Point(18, 133);
-            this.lGoogleDevInstructions.Name = "lGoogleDevInstructions";
-            this.lGoogleDevInstructions.Size = new System.Drawing.Size(284, 13);
-            this.lGoogleDevInstructions.TabIndex = 5;
-            this.lGoogleDevInstructions.Text = "You can get those values from Google Developer Console:";
-            // 
-            // txtGoogleDevClientSecret
-            // 
-            this.txtGoogleDevClientSecret.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGoogleDevClientSecret.Location = new System.Drawing.Point(18, 105);
-            this.txtGoogleDevClientSecret.Name = "txtGoogleDevClientSecret";
-            this.txtGoogleDevClientSecret.Size = new System.Drawing.Size(316, 20);
-            this.txtGoogleDevClientSecret.TabIndex = 4;
-            this.txtGoogleDevClientSecret.TextChanged += new System.EventHandler(this.txtGoogleDevClientSecret_TextChanged);
-            // 
-            // lClientSecret
-            // 
-            this.lClientSecret.AutoSize = true;
-            this.lClientSecret.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lClientSecret.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lClientSecret.Location = new System.Drawing.Point(18, 88);
-            this.lClientSecret.Name = "lClientSecret";
-            this.lClientSecret.Size = new System.Drawing.Size(67, 13);
-            this.lClientSecret.TabIndex = 3;
-            this.lClientSecret.Text = "Client Secret";
-            // 
-            // txtGoogleDevClientID
-            // 
-            this.txtGoogleDevClientID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGoogleDevClientID.Location = new System.Drawing.Point(18, 61);
-            this.txtGoogleDevClientID.Name = "txtGoogleDevClientID";
-            this.txtGoogleDevClientID.Size = new System.Drawing.Size(316, 20);
-            this.txtGoogleDevClientID.TabIndex = 2;
-            this.txtGoogleDevClientID.TextChanged += new System.EventHandler(this.txtGoogleDevClientID_TextChanged);
-            // 
-            // lClientID
-            // 
-            this.lClientID.AutoSize = true;
-            this.lClientID.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lClientID.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lClientID.Location = new System.Drawing.Point(18, 44);
-            this.lClientID.Name = "lClientID";
-            this.lClientID.Size = new System.Drawing.Size(47, 13);
-            this.lClientID.TabIndex = 1;
-            this.lClientID.Text = "Client ID";
-            // 
-            // cbGoogleDevOverride
-            // 
-            this.cbGoogleDevOverride.AutoSize = true;
-            this.cbGoogleDevOverride.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbGoogleDevOverride.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.cbGoogleDevOverride.Location = new System.Drawing.Point(18, 20);
-            this.cbGoogleDevOverride.Name = "cbGoogleDevOverride";
-            this.cbGoogleDevOverride.Size = new System.Drawing.Size(108, 17);
-            this.cbGoogleDevOverride.TabIndex = 0;
-            this.cbGoogleDevOverride.Text = "Override Defaults";
-            this.cbGoogleDevOverride.UseVisualStyleBackColor = true;
-            this.cbGoogleDevOverride.CheckedChanged += new System.EventHandler(this.cbGoogleDevOverride_CheckedChanged);
             // 
             // bSave
             // 
@@ -2268,6 +2281,7 @@
             this.dgAbout.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgAbout.Size = new System.Drawing.Size(328, 91);
             this.dgAbout.TabIndex = 44;
+            this.dgAbout.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgAbout_CellContentDoubleClick);
             // 
             // Column1
             // 
@@ -2610,15 +2624,17 @@
             this.gbEWS.PerformLayout();
             this.tabGoogle.ResumeLayout(false);
             this.tabGoogle.PerformLayout();
+            this.gbDeveloperOptions.ResumeLayout(false);
+            this.gbDeveloperOptions.PerformLayout();
             this.tabSyncOptions.ResumeLayout(false);
             this.tabSyncOptions.PerformLayout();
-            this.gbSyncOptions_How.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgObfuscateRegex)).EndInit();
             this.gbSyncOptions_When.ResumeLayout(false);
             this.gbSyncOptions_When.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDaysInTheFuture)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDaysInThePast)).EndInit();
+            this.gbSyncOptions_How.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgObfuscateRegex)).EndInit();
             this.WhatPostit.ResumeLayout(false);
             this.gbSyncOptions_What.ResumeLayout(false);
             this.gbSyncOptions_What.PerformLayout();
@@ -2628,12 +2644,9 @@
             this.gbProxy.ResumeLayout(false);
             this.gbProxy.PerformLayout();
             this.tabDevOptions.ResumeLayout(false);
-            this.tabDevOptions.PerformLayout();
             this.gbAutoRetryErrors.ResumeLayout(false);
             this.gbAutoRetryErrors.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAutoRetryDelay)).EndInit();
-            this.gbGoogleDeveloperSettings.ResumeLayout(false);
-            this.gbGoogleDeveloperSettings.PerformLayout();
             this.tabPage_Help.ResumeLayout(false);
             this.tabPage_Help.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -2667,13 +2680,11 @@
         private System.Windows.Forms.PictureBox pbDonate;
         public System.Windows.Forms.Button bSyncNow;
         private System.Windows.Forms.TabControl tabAppSettings;
-        private System.Windows.Forms.TabPage tabOutlook;
         private System.Windows.Forms.RadioButton rbOutlookEWS;
         public System.Windows.Forms.RadioButton rbOutlookDefaultMB;
         private System.Windows.Forms.RadioButton rbOutlookAltMB;
         public System.Windows.Forms.ComboBox ddMailboxName;
         private System.Windows.Forms.TabPage tabGoogle;
-        private System.Windows.Forms.Label lOutlookCalendar;
         private System.Windows.Forms.GroupBox gbEWS;
         private System.Windows.Forms.TextBox txtEWSServerURL;
         private System.Windows.Forms.Label label8;
@@ -2817,19 +2828,22 @@
         private System.Windows.Forms.ToolStripMenuItem miCatSelectAll;
         private System.Windows.Forms.ToolStripMenuItem miCatSelectNone;
         private System.Windows.Forms.ToolStripMenuItem miCatRefresh;
-        private System.Windows.Forms.TabPage tabDevOptions;
+        private System.Windows.Forms.GroupBox gbDeveloperOptions;
+        private System.Windows.Forms.LinkLabel llAPIConsole;
+        private System.Windows.Forms.CheckBox cbShowClientSecret;
+        private System.Windows.Forms.TextBox lGoogleAPIInstructions;
+        private System.Windows.Forms.TextBox tbClientSecret;
+        private System.Windows.Forms.TextBox tbClientID;
         private System.Windows.Forms.Label lClientID;
-        private System.Windows.Forms.GroupBox gbGoogleDeveloperSettings;
-        private System.Windows.Forms.CheckBox cbGoogleDevOverride;
-        private System.Windows.Forms.Label lClientSecret;
-        private System.Windows.Forms.TextBox txtGoogleDevClientID;
-        private System.Windows.Forms.TextBox txtGoogleDevClientSecret;
-        private System.Windows.Forms.Label lDeveloperOptions;
+        private System.Windows.Forms.Label lSecret;
+        private System.Windows.Forms.CheckBox cbShowDeveloperOptions;
+        public System.Windows.Forms.Label lOutlookCalendar;
+        public System.Windows.Forms.TabPage tabOutlook;
+        private System.Windows.Forms.TabPage tabDevOptions;
         private System.Windows.Forms.GroupBox gbAutoRetryErrors;
         private System.Windows.Forms.CheckBox cbEnableAutoRetry;
         private System.Windows.Forms.Label lRetryDelay;
         private System.Windows.Forms.NumericUpDown tbAutoRetryDelay;
-        private System.Windows.Forms.Label lGoogleDevInstructions;
-        private System.Windows.Forms.LinkLabel lGoogleConsolLink;
+
     }
 }

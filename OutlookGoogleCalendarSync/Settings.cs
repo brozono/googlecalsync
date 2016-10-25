@@ -34,6 +34,8 @@ namespace OutlookGoogleCalendarSync {
 
         private void setDefaults() {
             //Default values
+            PersonalClientIdentifier = "";
+            PersonalClientSecret = ""; 
             OutlookService = OutlookCalendar.Service.DefaultMailbox;
             MailboxName = "";
             EWSuser = "";
@@ -85,10 +87,6 @@ namespace OutlookGoogleCalendarSync {
             alphaReleases = false;
             Subscribed = DateTime.Parse("01-Jan-2000");
 
-            OverrideDeveloper = false;
-            GoogleDeveloperClientID = "";
-            GoogleDeveloperClientSecret = "";
-
             EnableAutoRetry = false;
             AutoRetryDelayMin = 1;
             
@@ -122,7 +120,20 @@ namespace OutlookGoogleCalendarSync {
         [DataMember] public System.Collections.Generic.List<string> Categories { get; set; }
         [DataMember] public string OutlookDateFormat { get; set; }
         #endregion
-        #region Google
+        #region Google        
+        private String personalClientIdentifier;
+        private String personalClientSecret;
+        [DataMember]public String PersonalClientIdentifier { 
+            get { return personalClientIdentifier; }
+            set { personalClientIdentifier = value.Trim(); } 
+        }
+        [DataMember] public String PersonalClientSecret { 
+            get { return personalClientSecret; }
+            set { personalClientSecret = value.Trim(); } 
+        }
+        public Boolean UsingPersonalAPIkeys() {
+            return !string.IsNullOrEmpty(PersonalClientIdentifier) && !string.IsNullOrEmpty(PersonalClientSecret);
+        }
         [DataMember] public MyGoogleCalendarListEntry UseGoogleCalendar { get; set; }
         [DataMember] public string RefreshToken { get; set; }
         [DataMember] public Boolean APIlimit_inEffect {
@@ -192,9 +203,6 @@ namespace OutlookGoogleCalendarSync {
         [DataMember] public SettingsProxy Proxy { get; set; }
         #endregion
         #region Dev Options
-        [DataMember] public bool OverrideDeveloper { get; set; }
-        [DataMember] public string GoogleDeveloperClientID { get; set; }
-        [DataMember] public string GoogleDeveloperClientSecret { get; set; }
         [DataMember] public bool EnableAutoRetry { get; set; }
         [DataMember] public int AutoRetryDelayMin { get; set; }
         #endregion
@@ -257,13 +265,19 @@ namespace OutlookGoogleCalendarSync {
             log.Info(Program.SettingsFile);
             log.Info("OUTLOOK SETTINGS:-");
             log.Info("  Service: "+ OutlookService.ToString());
+            log.Info("  Mailbox/FolderStore Name: " + MailboxName);
             log.Info("  Calendar: "+ (UseOutlookCalendar.Name=="Calendar"?"Default ":"") + UseOutlookCalendar.Name);
             log.Info("  Category Filter: " + CategoriesRestrictBy.ToString());
             log.Info("  Categories: " + String.Join(",", Categories.ToArray()));
             log.Info("  Filter String: " + OutlookDateFormat);
             
             log.Info("GOOGLE SETTINGS:-");
-            log.Info("  Calendar: "+ UseGoogleCalendar.Name);
+            log.Info("  Calendar: " + UseGoogleCalendar.Name);
+            log.Info("  Personal API Keys: " + UsingPersonalAPIkeys());
+            log.Info("    Client Identifier: " + PersonalClientIdentifier);
+            log.Info("    Client Secret: " + (PersonalClientSecret.Length < 5
+                ? "".PadLeft(PersonalClientSecret.Length, '*')
+                : PersonalClientSecret.Substring(0, PersonalClientSecret.Length - 5).PadRight(5, '*')));
             log.Info("  API attendee limit in effect: " + APIlimit_inEffect);
             log.Info("  API attendee limit last reached: " + APIlimit_lastHit);
         
@@ -319,9 +333,6 @@ namespace OutlookGoogleCalendarSync {
             log.Info("  Logging Level: "+ LoggingLevel);
 
             log.Info("DEVELOPER OPTIONS:-");
-            log.Info("  OverrideDeveloper: " + OverrideDeveloper);
-            log.Info("  Google Client ID: " + GoogleDeveloperClientID);
-            log.Info("  Google Client Secret: " + GoogleDeveloperClientSecret);
             log.Info("  Enable Retry: " + EnableAutoRetry);
             log.Info("  Auto Retry Delay (min): " + AutoRetryDelayMin);
 

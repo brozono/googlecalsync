@@ -347,8 +347,14 @@ namespace OutlookGoogleCalendarSync {
             dgAbout.Rows.Add(); r++;
             dgAbout.Rows[r].Cells[0].Value = "Subscription";
             dgAbout.Rows[r].Cells[1].Value = (Settings.Instance.Subscribed == DateTime.Parse("01-Jan-2000")) ? "N/A" : Settings.Instance.Subscribed.ToShortDateString();
-            dgAbout.Height = (dgAbout.Rows[r].Height * 4) + 2;
-            
+            dgAbout.Rows.Add(); r++;
+            dgAbout.Rows[r].Cells[0].Value = "Timezone DB";
+            dgAbout.Rows[r].Cells[1].Value = TimezoneDB.Instance.Version;
+            dgAbout.Height = (dgAbout.Rows[r].Height * (r + 1)) + 2;
+
+            MainForm.Instance.lAboutMain.Text = MainForm.Instance.lAboutMain.Text.Replace("20xx",
+                (new DateTime(2000, 1, 1).Add(new TimeSpan(TimeSpan.TicksPerDay * System.Reflection.Assembly.GetEntryAssembly().GetName().Version.Build))).Year.ToString());
+
             cbAlphaReleases.Checked = Settings.Instance.AlphaReleases;
             cbAlphaReleases.Visible = !Program.isClickOnceInstall();
             #endregion
@@ -420,7 +426,7 @@ namespace OutlookGoogleCalendarSync {
                 Sync_Requested(sender, e);
             } catch (System.Exception ex) {
                 MainForm.Instance.Logboxout("WARNING: Problem encountered during synchronisation.\r\n" + ex.Message);
-                log.Error(ex.StackTrace);
+                OGCSexception.Analyse(ex, true);
             }
         }
         public void Sync_Requested(object sender = null, EventArgs e = null) {
@@ -485,7 +491,7 @@ namespace OutlookGoogleCalendarSync {
                 }
             } catch (System.Exception ex) {
                 Logboxout(ex.Message, notifyBubble: true);
-                log.Error(ex.StackTrace);
+                OGCSexception.Analyse(ex, true);
                 return;
             }
             GoogleCalendar.APIlimitReached_attendee = false;
@@ -547,7 +553,7 @@ namespace OutlookGoogleCalendarSync {
                             } else {
                                 MainForm.Instance.Logboxout(ex.Message, notifyBubble: true);
                             }
-                            log.Error(ex.StackTrace);
+                            OGCSexception.Analyse(ex, true);
                             syncOk = false;
                         }
                     }
@@ -611,6 +617,23 @@ namespace OutlookGoogleCalendarSync {
             OutlookCalendar.Instance.IOutlook.Disconnect(onlyWhenNoGUI: true);
 
             checkSyncMilestone();
+        }
+
+        private void skipCorruptedItem(ref List<AppointmentItem> outlookEntries, AppointmentItem cai, String errMsg) {
+            try {
+                String itemSummary = OutlookCalendar.GetEventSummary(cai);
+                if (string.IsNullOrEmpty(itemSummary)) {
+                    try {
+                        itemSummary = cai.Start.Date.ToShortDateString() + " => " + cai.Subject;
+                    } catch {
+                        itemSummary = cai.Subject;
+                    }
+                }
+                Logboxout("WARN: " + itemSummary + "\r\nThere is probem with this item - it will not be synced.\r\n" + errMsg);
+            } finally {
+                log.Debug("Outlook object removed.");
+                outlookEntries.Remove(cai);
+            }
         }
 
         private Boolean synchronize() {
@@ -707,7 +730,6 @@ namespace OutlookGoogleCalendarSync {
             for (int o = outlookEntries.Count - 1; o >= 0; o--) {
                 log.Fine("Processing " + o + "/" + (outlookEntries.Count - 1));
                 AppointmentItem ai = null;
-                String entryID = outlookEntries[o].EntryID;
                 try {
                     if (outlookEntries[o] is AppointmentItem) ai = outlookEntries[o];
                     else if (outlookEntries[o] is MeetingItem) {
@@ -717,29 +739,30 @@ namespace OutlookGoogleCalendarSync {
                         ai = outlookEntries[o];
                     } else {
                         log.Warn("Unknown calendar object type - cannot sync it.");
-                        log.Debug("Outlook object removed: " + outlookEntries[o].Subject);
+                        skipCorruptedItem(ref outlookEntries, outlookEntries[o], "Unknown object type.");
                         outlookEntries[o] = (AppointmentItem)OutlookCalendar.ReleaseObject(outlookEntries[o]);
-                        outlookEntries.RemoveAt(o);
                         continue;
                     }
                 } catch (System.Exception ex) {
-                    log.Error("Encountered error casting calendar object to AppointItem - cannot sync it.");
+                    log.Warn("Encountered error casting calendar object to AppointmentItem - cannot sync it.");
                     log.Debug(ex.Message);
-                    log.Debug("Outlook object removed: " + outlookEntries[o].Subject);
+                    skipCorruptedItem(ref outlookEntries, outlookEntries[o], ex.Message);
                     outlookEntries[o] = (AppointmentItem)OutlookCalendar.ReleaseObject(outlookEntries[o]);
-                    outlookEntries.RemoveAt(o);
+                    ai = (AppointmentItem)OutlookCalendar.ReleaseObject(ai);
                     continue;
                 }
 
                 //Now let's check there's a start/end date - sometimes it can be missing, even though this shouldn't be possible!!
+                String entryID;
                 try {
+                    entryID = outlookEntries[o].EntryID;
                     DateTime checkDates = ai.Start;
                     checkDates = ai.End;
                 } catch (System.Exception ex) {
-                    log.Debug(ex.Message);
                     log.Warn("Calendar item does not have a proper date range - cannot sync it.");
-                    outlookEntries.Remove(ai);
-                    log.Debug("Outlook object removed: " + ai.Subject);
+                    log.Debug(ex.Message);
+                    skipCorruptedItem(ref outlookEntries, outlookEntries[o], ex.Message);
+                    outlookEntries[o] = (AppointmentItem)OutlookCalendar.ReleaseObject(outlookEntries[o]);
                     ai = (AppointmentItem)OutlookCalendar.ReleaseObject(ai);
                     continue;
                 }
@@ -1052,6 +1075,34 @@ namespace OutlookGoogleCalendarSync {
         }
 
         #region Compare Event Attributes
+        public static Boolean ItemIDsMatch(String gEntryID, String oGlobalID) {
+            if (string.IsNullOrEmpty(gEntryID)) {
+                log.Error("Google Event ID is not available!");
+                return false;
+            }
+            if (string.IsNullOrEmpty(oGlobalID)) {
+                log.Error("Outlook global ID is not available!");
+                return false;
+            }
+
+            log.Fine("Google ID:  " + gEntryID);
+            log.Fine("Outlook ID: " + oGlobalID);
+
+            //For format of Global ID: https://msdn.microsoft.com/en-us/library/ee157690%28v=exchg.80%29.aspx
+            if (oGlobalID.StartsWith("040000008200E00074C5B7101A82E008")) {
+                log.Fine("Comparing Outlook GlobalID");
+
+                //For items copied from someone elses calendar, it appears the Global ID is generated for each access?! (Creation Time changes)
+                //I guess the copied item doesn't really have its "own" ID. So, we'll just compare
+                //the "data" section of the byte array, which "ensures uniqueness" and doesn't include ID creation time
+                gEntryID = gEntryID.Substring(72);
+                oGlobalID = oGlobalID.Substring(72);
+            } else
+                log.Fine("Comparing Outlook EntryID");
+
+            return (gEntryID == oGlobalID);
+        }
+
         public static Boolean CompareAttribute(String attrDesc, SyncDirection fromTo, String googleAttr, String outlookAttr, System.Text.StringBuilder sb, ref int itemModified) {
             if (googleAttr == null) googleAttr = "";
             if (outlookAttr == null) outlookAttr = "";
@@ -1091,7 +1142,7 @@ namespace OutlookGoogleCalendarSync {
                 String existingText = GetControlPropertyThreadSafe(LogBox, "Text") as String;
                 SetControlPropertyThreadSafe(LogBox, "Text", existingText + s + (newLine ? Environment.NewLine : ""));
             }
-            if (notifyBubble & Settings.Instance.ShowBubbleTooltipWhenSyncing) {
+            if (NotificationTray != null && notifyBubble & Settings.Instance.ShowBubbleTooltipWhenSyncing) {
                 NotificationTray.ShowBubbleInfo("Issue encountered.\n" +
                     "Please review output on the main 'Sync' tab", ToolTipIcon.Warning);
             }
@@ -1128,7 +1179,7 @@ namespace OutlookGoogleCalendarSync {
                 case SyncNotes.SubscriptionPendingExpire:
                     DateTime expiration = (DateTime)extraData;
                     note =  "  Your annual subscription for guaranteed quota   " + cr +
-                            "  for Google calendar usage is expiring on" + expiration.ToString("dd-MMM") + "." + cr +
+                            "  for Google calendar usage is expiring on " + expiration.ToString("dd-MMM") + "." + cr +
                             "         Click to renew for just £1/month.        ";
                     url = urlStub + "OGCS Premium renewal from " + expiration.ToString("dd-MMM-yy") + " for " + Settings.Instance.GaccountEmail;
                     break;

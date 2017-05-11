@@ -21,6 +21,8 @@ namespace OutlookGoogleCalendarSync {
         private Boolean portable;
         private Boolean alphaReleases;
         private String version;
+        private Boolean donor;
+        private Boolean hideSplashScreen;
 
         public Settings() {
             setDefaults();
@@ -34,13 +36,12 @@ namespace OutlookGoogleCalendarSync {
 
         private void setDefaults() {
             //Default values
+            AssignedClientIdentifier = "";
             PersonalClientIdentifier = "";
             PersonalClientSecret = ""; 
             OutlookService = OutlookCalendar.Service.DefaultMailbox;
             MailboxName = "";
-            EWSuser = "";
-            EWSpassword = "";
-            EWSserver = "";
+            SharedCalendar = "";
             UseOutlookCalendar = new MyOutlookCalendarListEntry();
             CategoriesRestrictBy = RestrictBy.Exclude;
             Categories = new System.Collections.Generic.List<String>();
@@ -65,12 +66,13 @@ namespace OutlookGoogleCalendarSync {
             ReminderDND = false;
             ReminderDNDstart = DateTime.Now.Date.AddHours(22);
             ReminderDNDend = DateTime.Now.Date.AddDays(1).AddHours(6);
-            AddAttendees = true;
-            NumberAttendees = 200;
+            AddAttendees = false;
             MergeItems = true;
             DisableDelete = true;
             ConfirmOnDelete = true;
             Obfuscation = new Obfuscate();
+
+            NumberAttendees = 200;
 
             ShowBubbleTooltipWhenSyncing = true;
             StartOnStartup = false;
@@ -86,6 +88,8 @@ namespace OutlookGoogleCalendarSync {
 
             alphaReleases = false;
             Subscribed = DateTime.Parse("01-Jan-2000");
+            donor = true;
+            hideSplashScreen = true;
 
             EnableAutoRetry = false;
             AutoRetryDelayMin = 1;
@@ -112,18 +116,24 @@ namespace OutlookGoogleCalendarSync {
         }   
         [DataMember] public OutlookCalendar.Service OutlookService { get; set; }
         [DataMember] public string MailboxName { get; set; }
-        [DataMember] public string EWSuser { get; set; }
-        [DataMember] public string EWSpassword { get; set; }
-        [DataMember] public string EWSserver { get; set; }
+        [DataMember] public string SharedCalendar { get; set; }
         [DataMember] public MyOutlookCalendarListEntry UseOutlookCalendar { get; set; }
         [DataMember] public RestrictBy CategoriesRestrictBy { get; set; }
         [DataMember] public System.Collections.Generic.List<string> Categories { get; set; }
         [DataMember] public string OutlookDateFormat { get; set; }
         #endregion
-        #region Google        
+        #region Google
+        private String assignedClientIdentifier;
+        [DataMember] public String AssignedClientIdentifier {
+            get { return assignedClientIdentifier; }
+            set {
+                assignedClientIdentifier = value.Trim();
+                if (!loading()) XMLManager.ExportElement("AssignedClientIdentifier", value.Trim(), Program.SettingsFile);
+            }
+        }
         private String personalClientIdentifier;
         private String personalClientSecret;
-        [DataMember]public String PersonalClientIdentifier { 
+        [DataMember] public String PersonalClientIdentifier { 
             get { return personalClientIdentifier; }
             set { personalClientIdentifier = value.Trim(); } 
         }
@@ -183,6 +193,14 @@ namespace OutlookGoogleCalendarSync {
 
         #endregion
         #region App behaviour
+        [DataMember] public bool HideSplashScreen {
+            get { return hideSplashScreen; }
+            set {
+                hideSplashScreen = value;
+                if (!loading()) XMLManager.ExportElement("HideSplashScreen", value, Program.SettingsFile);
+            }
+        }
+        
         [DataMember] public bool ShowBubbleTooltipWhenSyncing { get; set; }
         [DataMember] public bool StartOnStartup { get; set; }
         [DataMember] public bool StartInTray { get; set; }
@@ -224,6 +242,13 @@ namespace OutlookGoogleCalendarSync {
             }
         }
         [DataMember] public DateTime Subscribed { get; set; }
+        [DataMember] public Boolean Donor {
+            get { return donor; }
+            set {
+                donor = value;
+                if (!loading()) XMLManager.ExportElement("Donor", value, Program.SettingsFile);
+            }
+        }
         #endregion
 
         [DataMember] public DateTime LastSyncDate {
@@ -265,7 +290,11 @@ namespace OutlookGoogleCalendarSync {
             log.Info(Program.SettingsFile);
             log.Info("OUTLOOK SETTINGS:-");
             log.Info("  Service: "+ OutlookService.ToString());
-            log.Info("  Mailbox/FolderStore Name: " + MailboxName);
+            if (OutlookService == OutlookCalendar.Service.SharedCalendar) {
+                log.Info("  Shared Calendar: " + SharedCalendar);
+            } else {
+                log.Info("  Mailbox/FolderStore Name: " + MailboxName);
+            }
             log.Info("  Calendar: "+ (UseOutlookCalendar.Name=="Calendar"?"Default ":"") + UseOutlookCalendar.Name);
             log.Info("  Category Filter: " + CategoriesRestrictBy.ToString());
             log.Info("  Categories: " + String.Join(",", Categories.ToArray()));
@@ -280,6 +309,7 @@ namespace OutlookGoogleCalendarSync {
                 : PersonalClientSecret.Substring(0, PersonalClientSecret.Length - 5).PadRight(5, '*')));
             log.Info("  API attendee limit in effect: " + APIlimit_inEffect);
             log.Info("  API attendee limit last reached: " + APIlimit_lastHit);
+            log.Info("  Assigned API key: " + AssignedClientIdentifier);
         
             log.Info("SYNC OPTIONS:-");
             log.Info(" Main");
@@ -313,6 +343,7 @@ namespace OutlookGoogleCalendarSync {
             if (Proxy.Type == "Custom") {
                 log.Info("  Server Name: " + Proxy.ServerName);
                 log.Info("  Port: " + Proxy.Port.ToString());
+                log.Info("  Authentication Required: " + Proxy.AuthenticationRequired);
                 log.Info("  UserName: " + Proxy.UserName);
                 log.Info("  Password: " + (string.IsNullOrEmpty(Proxy.Password) ? "" : "*********"));
             } 
@@ -320,6 +351,7 @@ namespace OutlookGoogleCalendarSync {
             log.Info("APPLICATION BEHAVIOUR:-");
             log.Info("  ShowBubbleTooltipWhenSyncing: " + ShowBubbleTooltipWhenSyncing);
             log.Info("  StartOnStartup: " + StartOnStartup);
+            log.Info("  HideSplashScreen: " + (Donor ? HideSplashScreen.ToString() : "N/A"));
             log.Info("  StartInTray: " + StartInTray);
             log.Info("  MinimiseToTray: " + MinimiseToTray);
             log.Info("  MinimiseNotClose: " + MinimiseNotClose);

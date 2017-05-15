@@ -2762,7 +2762,7 @@
         private System.Windows.Forms.CheckBox cbShowDeveloperOptions;
         public System.Windows.Forms.Label lOutlookCalendar;
         public System.Windows.Forms.TabPage tabOutlook;
-        private System.Windows.Forms.CheckBox cbHideSplash;
+        public System.Windows.Forms.CheckBox cbHideSplash;
         private System.Windows.Forms.TabPage tabDevOptions;
         private System.Windows.Forms.GroupBox gbAutoRetryErrors;
         private System.Windows.Forms.CheckBox cbEnableAutoRetry;

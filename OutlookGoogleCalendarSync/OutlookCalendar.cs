@@ -16,6 +16,10 @@ namespace OutlookGoogleCalendarSync {
         private static readonly ILog log = LogManager.GetLogger(typeof(OutlookCalendar));
         public OutlookInterface IOutlook;
 
+        /// <summary>
+        /// Whether instance of OutlookCalendar class should connect to Outlook application
+        /// </summary>
+        public static Boolean InstanceConnect = true;
         public static OutlookCalendar Instance {
             get {
                 try {
@@ -80,7 +84,7 @@ namespace OutlookGoogleCalendarSync {
         
         public OutlookCalendar() {
             IOutlook = OutlookFactory.getOutlookInterface();
-            IOutlook.Connect();
+            if (InstanceConnect) IOutlook.Connect();
         }
 
         public void Reset() {
@@ -88,7 +92,7 @@ namespace OutlookGoogleCalendarSync {
             if (IOutlook != null) IOutlook.Disconnect();
             instance = new OutlookCalendar();
         }
-
+        
         #region Push Sync
         //Multi-threaded, so need to protect against registering events more than once
         //Simply removing an event handler before adding isn't safe enough
@@ -780,22 +784,15 @@ namespace OutlookGoogleCalendarSync {
                 if (!GetOGCSproperty(ai, MetadataId.gEventID)) {
                     unclaimedAi.Add(ai);
 
-                    //Use simple matching on start,end,subject,location to pair events
-                    String sigAi = signature(ai);
-                    foreach (Event ev in gEvents) {
+                    for (int g = gEvents.Count -1; g >=0 ; g--) {
+                        Event ev = gEvents[g];
                         String sigEv = GoogleCalendar.signature(ev);
                         if (String.IsNullOrEmpty(sigEv)) {
                             gEvents.Remove(ev);
                             continue;
                         }
 
-                        if (Settings.Instance.Obfuscation.Enabled) {
-                            if (Settings.Instance.Obfuscation.Direction == SyncDirection.OutlookToGoogle)
-                                sigAi = Obfuscate.ApplyRegex(sigAi, SyncDirection.OutlookToGoogle);
-                            else
-                                sigEv = Obfuscate.ApplyRegex(sigEv, SyncDirection.GoogleToOutlook);
-                        }
-                        if (sigAi == sigEv) {
+                        if (GoogleCalendar.SignaturesMatch(sigEv, signature(ai))) {
                             AddGoogleIDs(ref ai, ev);
                             updateCalendarEntry_save(ai);
                             unclaimedAi.Remove(ai);
@@ -891,9 +888,12 @@ namespace OutlookGoogleCalendarSync {
                 if (ex.ErrorCode == -2147221164) {
                     log.Error(ex.Message);
                     throw new ApplicationException("Outlook does not appear to be installed!\nThis is a pre-requisite for this software.");
+                } else if (OGCSexception.GetErrorCode(ex, 0x000FFFFF) == "0x000702E4") {
+                    throw new ApplicationException("Outlook and OGCS are running in different security elevations.\n" +
+                        "Both must be running in Standard or Administrator mode.");
                 } else {
                     log.Error("COM Exception encountered.");
-                    log.Error(ex.ToString());
+                    OGCSexception.Analyse(ex);
                     System.Diagnostics.Process.Start(@Program.UserFilePath);
                     System.Diagnostics.Process.Start("https://outlookgooglecalendarsync.codeplex.com/workitem/list/basic");
                     throw new ApplicationException("COM exception encountered. Please log an Issue on CodePlex and upload your OGcalsync.log file.");
@@ -1057,11 +1057,6 @@ namespace OutlookGoogleCalendarSync {
                         outlook.Remove(outlook[o]);
                 }
             }
-            //Remove cancelled occurences for recurring Events
-            List<Event> cancelled = google.Where(ev => ev.Status == "cancelled" && string.IsNullOrEmpty(ev.RecurringEventId)).ToList();
-            log.Debug(cancelled.Count + " Google Events are cancelled and will be excluded.");
-            google = google.Except(cancelled).ToList();
-
             if (Settings.Instance.CreateCSVFiles) {
                 ExportToCSV("Appointments for deletion in Outlook", "outlook_delete.csv", outlook);
                 GoogleCalendar.ExportToCSV("Events for creation in Outlook", "outlook_create.csv", google);

@@ -36,7 +36,7 @@ namespace OutlookGoogleCalendarSync {
 
         private void setDefaults() {
             //Default values
-            AssignedClientIdentifier = "";
+            assignedClientIdentifier = "";
             PersonalClientIdentifier = "";
             PersonalClientSecret = ""; 
             OutlookService = OutlookCalendar.Service.DefaultMailbox;
@@ -97,6 +97,10 @@ namespace OutlookGoogleCalendarSync {
             lastSyncDate = new DateTime(0);
             completedSyncs = 0;
             VerboseOutput = false;
+        }
+
+        public static Boolean InstanceInitialiased() {
+            return (instance != null);
         }
 
         public static Settings Instance {
@@ -196,8 +200,11 @@ namespace OutlookGoogleCalendarSync {
         [DataMember] public bool HideSplashScreen {
             get { return hideSplashScreen; }
             set {
+                if (!loading() && hideSplashScreen != value) {
+                    XMLManager.ExportElement("HideSplashScreen", value, Program.SettingsFile);
+                    if (MainForm.Instance != null) MainForm.Instance.cbHideSplash.Checked = value;
+                }
                 hideSplashScreen = value;
-                if (!loading()) XMLManager.ExportElement("HideSplashScreen", value, Program.SettingsFile);
             }
         }
         
@@ -351,7 +358,7 @@ namespace OutlookGoogleCalendarSync {
             log.Info("APPLICATION BEHAVIOUR:-");
             log.Info("  ShowBubbleTooltipWhenSyncing: " + ShowBubbleTooltipWhenSyncing);
             log.Info("  StartOnStartup: " + StartOnStartup);
-            log.Info("  HideSplashScreen: " + (Donor ? HideSplashScreen.ToString() : "N/A"));
+            log.Info("  HideSplashScreen: " + ((Subscribed != DateTime.Parse("01-Jan-2000") || Donor) ? HideSplashScreen.ToString() : "N/A"));
             log.Info("  StartInTray: " + StartInTray);
             log.Info("  MinimiseToTray: " + MinimiseToTray);
             log.Info("  MinimiseNotClose: " + MinimiseNotClose);

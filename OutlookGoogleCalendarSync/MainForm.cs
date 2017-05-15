@@ -325,7 +325,7 @@ namespace OutlookGoogleCalendarSync {
             cbMinimiseToTray.Checked = Settings.Instance.MinimiseToTray;
             cbMinimiseNotClose.Checked = Settings.Instance.MinimiseNotClose;
             cbPortable.Checked = Settings.Instance.Portable;
-            cbPortable.Enabled = !Program.isClickOnceInstall();
+            cbPortable.Enabled = !Program.IsClickOnceInstall;
             cbCreateFiles.Checked = Settings.Instance.CreateCSVFiles;
             for (int i = 0; i < cbLoggingLevel.Items.Count; i++) {
                 if (cbLoggingLevel.Items[i].ToString().ToLower() == Settings.Instance.LoggingLevel.ToLower()) {
@@ -362,7 +362,6 @@ namespace OutlookGoogleCalendarSync {
                 (new DateTime(2000, 1, 1).Add(new TimeSpan(TimeSpan.TicksPerDay * System.Reflection.Assembly.GetEntryAssembly().GetName().Version.Build))).Year.ToString());
 
             cbAlphaReleases.Checked = Settings.Instance.AlphaReleases;
-            cbAlphaReleases.Visible = !Program.isClickOnceInstall();
             #endregion
             this.ResumeLayout();
         }
@@ -971,13 +970,12 @@ namespace OutlookGoogleCalendarSync {
         private Boolean sync_googleToOutlook(List<Event> googleEntries, List<AppointmentItem> outlookEntries, ref String bubbleText) {
             log.Debug("Synchronising from Google to Outlook.");
             
-            //  Make copies of each list of events (Not strictly needed)
             List<Event> outlookEntriesToBeCreated = new List<Event>(googleEntries);
             List<AppointmentItem> outlookEntriesToBeDeleted = new List<AppointmentItem>(outlookEntries);
             Dictionary<AppointmentItem, Event> entriesToBeCompared = new Dictionary<AppointmentItem, Event>();
             
             try {
-                OutlookCalendar.Instance.ReclaimOrphanCalendarEntries(ref outlookEntriesToBeDeleted, ref googleEntries);
+                OutlookCalendar.Instance.ReclaimOrphanCalendarEntries(ref outlookEntriesToBeDeleted, ref outlookEntriesToBeCreated);
             } catch (System.Exception ex) {
                 MainForm.Instance.Logboxout("Unable to reclaim orphan calendar entries in Outlook calendar.");
                 throw ex;
@@ -1720,7 +1718,9 @@ namespace OutlookGoogleCalendarSync {
 
         private void cbHideSplash_CheckedChanged(object sender, EventArgs e) {
             if (Settings.Instance.Subscribed == DateTime.Parse("01-Jan-2000") && !Settings.Instance.Donor) {
+                cbHideSplash.CheckedChanged -= cbHideSplash_CheckedChanged;
                 cbHideSplash.Checked = false;
+                cbHideSplash.CheckedChanged += cbHideSplash_CheckedChanged;
                 ToolTips.SetToolTip(cbHideSplash, "Donate £10 or more to enable this feature.");
                 ToolTips.Show(ToolTips.GetToolTip(cbHideSplash), cbHideSplash, 5000);
                 Settings.Instance.HideSplashScreen = cbHideSplash.Checked;
@@ -1846,7 +1846,7 @@ namespace OutlookGoogleCalendarSync {
         }
 
         private void btCheckForUpdate_Click(object sender, EventArgs e) {
-            Program.checkForUpdate(true);
+            Program.Updater.CheckForUpdate(btCheckForUpdate);
         }
         private void cbAlphaReleases_CheckedChanged(object sender, EventArgs e) {
             if (this.Visible)
@@ -1945,5 +1945,6 @@ namespace OutlookGoogleCalendarSync {
         }
 
         #endregion
+
     }
 }
